@@ -20,12 +20,13 @@ include ./setup/env_check.mk
 # Simulation related
 ################################################################################
 SIM = verilator
-DUMP = off
+DUMP ?= 0
 TIMELOG = time.log 
 TIMECMD = time -a -o $(TIMELOG)
 THREADS ?= 4
 WORKDIR ?= work
 VERILATOR_FLAGS ?= 
+SIM_FLAGS ?= 
 
 # Generate C++ in executable form
 #VERILATOR_FLAGS += -cc --exe
@@ -48,9 +49,10 @@ VERILATOR_FLAGS ?=
 # Add this trace to get a backtrace in gdb
 #VERILATOR_FLAGS += --gdbbt
 
-ifeq ($(DUMP), on)
+ifeq ($(DUMP), 1)
 SIM_DUMP :=
 VERILATOR_FLAGS += --trace --trace-threads 4
+SIM_FLAGS += +trace
 else
 ifeq (${SIM}, iverilog)
 SIM_DUMP = -DNO_DUMP
@@ -93,6 +95,7 @@ else
           SIMULATOR_LOG := 
         else
             ifeq ($(SIM), verilator)
+    		  TIMESCALE := --timescale 1ns/100fs
               SIMULATOR_OPT := -Os -x-assign 0 --threads $(THREADS) -Wno-fatal $(VERILATOR_FLAGS)
               SIMULATOR_DEF := -cc --exe --top-module top ../vrlt_cfg.vlt
               SIMULATOR_LOG := 
@@ -127,7 +130,8 @@ else
 ifeq ($(SIM), verilator)
 	@echo "[verilator] Generating C++ files..." >> ./$(WORKDIR)/$(TIMELOG)
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
-	@cd ./$(WORKDIR) && $(TIMECMD) verilator $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST) 2>&1 | tee -a $(TIMELOG)
+	@echo "verilator $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST)" >> ./$(WORKDIR)/$(TIMELOG)
+	@cd ./$(WORKDIR) && $(TIMECMD) verilator $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST) 2>&1 | tee -a vrlt_com.log
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
 else	
 	@echo "  [THead-smart] Please specify SIM = vcs to use VCS, or SIM = nc ,or SIM = verilator to use verilator ..."
@@ -210,7 +214,7 @@ else
 				if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then make buildVerilator ; fi
 				@echo "[Vtop] Simulation..." >> ./$(WORKDIR)/$(TIMELOG)
 				@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
-				cd ./$(WORKDIR) && $(TIMECMD) obj_dir/Vtop	
+				cd ./$(WORKDIR) && $(TIMECMD) obj_dir/Vtop $(SIM_FLAGS) 2>&1 | tee sim.log
 				@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
             else
 	        cd ./$(WORKDIR) && vvp xuantie_core.vvp 

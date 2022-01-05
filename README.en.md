@@ -14,14 +14,14 @@ Software architecture description
 
 #### Instructions
 
-1.  xxxx
-2.  xxxx
+1.  cd smart_run
+2.  make runcase CASE=coremark WORKDIR=work_trace_thread4 DUMP=1 THREADS=8
 3.  xxxx
 
 #### Contribution
 
 1.  Fork the repository
-2.  Create Feat_xxx branch
+2.  
 3.  Commit your code
 4.  Create Pull Request
 
