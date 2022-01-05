@@ -96,7 +96,6 @@ else
               SIMULATOR_OPT := -Os -x-assign 0 --threads $(THREADS) -Wno-fatal $(VERILATOR_FLAGS)
               SIMULATOR_DEF := -cc --exe --top-module top ../vrlt_cfg.vlt
               SIMULATOR_LOG := 
-            else
             endif
         endif
     endif
@@ -119,22 +118,22 @@ ifeq ($(SIM), vcs)
 	@make -s cleansim
 	@cd ./$(WORKDIR) && vcs $(SIMULATOR_OPT) $(TIMESCALE) $(SIMULATOR_DEF) $(SIM_FILELIST) $(SIM_DUMP) $(SIMULATOR_LOG) $(SIMULATOR_POWER_OPT) 
 else 
-    ifeq ($(SIM), nc) 
-	@cd ./$(WORKDIR) && irun $(SIMULATOR_OPT) $(TIMESCALE) $(SIMULATOR_DEF) $(SIM_FILELIST) $(SIM_DUMP) $(SIMULATOR_LOG) 
-    else
-        ifeq ($(SIM), iverilog)
-	  @cd ./$(WORKDIR) && iverilog $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIM_FILELIST) $(SIM_DUMP) $(SIMULATOR_LOG)
-        else
-            ifeq ($(SIM), verilator)
-			@echo "[verilator] Generating C++ files..." >> ./$(WORKDIR)/$(TIMELOG)
-			@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
-	      	@cd ./$(WORKDIR) && $(TIMECMD) verilator $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST) 2>&1 | tee -a $(TIMELOG)
-			@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
-		else
-	      	@echo "  [THead-smart] Please specify SIM = vcs to use VCS, or SIM = nc ,or SIM = verilator to use verilator ..."
-		endif
-        endif
-    endif 
+ifeq ($(SIM), nc) 
+@cd ./$(WORKDIR) && irun $(SIMULATOR_OPT) $(TIMESCALE) $(SIMULATOR_DEF) $(SIM_FILELIST) $(SIM_DUMP) $(SIMULATOR_LOG)
+else
+ifeq ($(SIM), iverilog)
+@cd ./$(WORKDIR) && iverilog $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIM_FILELIST) $(SIM_DUMP) $(SIMULATOR_LOG)
+else
+ifeq ($(SIM), verilator)
+	@echo "[verilator] Generating C++ files..." >> ./$(WORKDIR)/$(TIMELOG)
+	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
+	@cd ./$(WORKDIR) && $(TIMECMD) verilator $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST) 2>&1 | tee -a $(TIMELOG)
+	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
+else	
+	@echo "  [THead-smart] Please specify SIM = vcs to use VCS, or SIM = nc ,or SIM = verilator to use verilator ..."
+endif
+endif
+endif 
 endif 
 
 buildVerilator:

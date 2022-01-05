@@ -8,7 +8,7 @@ Software architecture description
 
 #### Installation
 
-1.  xxxx
+1.  ln -s /home/yangkai/1_SA/1_Verilator/xuantie-gnu-toolchain .
 2.  xxxx
 3.  xxxx
 
