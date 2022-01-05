@@ -1,0 +1,21 @@
+
+ Block      Pattern                   Result
+---------------------------------------------
+0         hello_world            PASS 0:02.33
+1         debug_memory          =>FAIL 5:41:0
+2         ISA_THEAD              PASS 0:03.21
+3         ISA_FP                 PASS 0:09.17
+4         cache_op               PASS 0:05.74
+5         debug_gpr             =>FAIL 4:46:4
+6         smoke_bus              PASS 0:04.81
+7         ISA_IMAC               PASS 0:03.47
+8         ISA_AMO                PASS 0:15.76
+9         csr                    PASS 0:01.27
+10        coremark               PASS 1:19.42
+11        MMU                    PASS 0:01.48
+12        plic_int              =>FAIL 0:19.7
+13        sleep                 =>FAIL 0:31.0
+14        ISA_BARRIER            PASS 0:06.89
+---------------------------------------------
+ Not run   Pass   Fail   Total
+   0       11      4      15
