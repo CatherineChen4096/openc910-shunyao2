@@ -8,5 +8,5 @@
 #PATH=/usr/bin:/usr/sbin
 #export PATH
 
-export CODE_BASE_PATH=/home/yangkai/1_SA/1_Verilator/openc910/C910_RTL_FACTORY
+export CODE_BASE_PATH=`pwd`/C910_RTL_FACTORY
 export TOOL_EXTENSION=/software/riscv_xuantie/bin
