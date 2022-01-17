@@ -366,9 +366,9 @@ module top(
     `ifdef IVERILOG_SIM
       $dumpfile("test.vcd");
       $dumpvars;  
-    `else
-      $dumpfile("test.vcd");
-      $dumpvars;  
+    //`else
+    //  $dumpfile("test.vcd");
+    //  $dumpvars;  
     `endif
   `endif
   end

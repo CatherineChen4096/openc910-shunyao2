@@ -11,13 +11,13 @@
 // Include common routines
 #include <verilated.h>
 
-// Include model header, generated from Verilating "tb.v"
-#include "Vtb.h"
+// Include model header, generated from Verilating "top.v"
+#include "Vtop.h"
 #if VM_TRACE
     #include <verilated_vcd_c.h>
 #endif
 
-#define CLK_PERIOD          10
+#define CLK_PERIOD          2
 #define TCLK_PERIOD         40
 // Legacy function required only so linking works on Cygwin and MSVC++
 double sc_time_stamp() { return 0; }
@@ -32,7 +32,7 @@ int main(int argc, char** argv, char** env) {
     Verilated::mkdir("logs");
 
     // Construct a VerilatedContext to hold simulation time, etc.
-    // Multiple modules (made later below with Vtb) may share the same
+    // Multiple modules (made later below with Vtop) may share the same
     // context to share time, or modules may have different contexts if
     // they should be independent from each other.
 
@@ -48,6 +48,15 @@ int main(int argc, char** argv, char** env) {
     // May be overridden by commandArgs argument parsing
     contextp->randReset(2);
 
+    // Pass arguments so Verilated code can see them, e.g. $value$plusargs
+    // This needs to be called before you create any model
+    contextp->commandArgs(argc, argv);
+
+    // Construct the Verilated model, from Vtop.h generated from Verilating "top.v".
+    // Using unique_ptr is similar to "Vtop* top = new Vtop" then deleting at end.
+    // "TOP" will be the hierarchical name of the module.
+    const std::unique_ptr<Vtop> top{new Vtop{contextp.get(), "TOP"}};
+
     // Verilator must compute traced signals
 #if VM_TRACE == 1
     VerilatedVcdC* tfp = NULL;
@@ -55,25 +64,12 @@ int main(int argc, char** argv, char** env) {
     if (flag && 0==strcmp(flag, "+trace"))  {
 		contextp->traceEverOn(true);	// Verilator must compute traced signals
 		tfp = new VerilatedVcdC;
-    	tb->trace(tfp, 99);	// Trace 99 levels of hierarchy
+    	top->trace(tfp, 99);	// Trace 99 levels of hierarchy
     	tfp->open("openc910.vcd");	// Open the dump file
 	}
 #endif 
-
-    // Pass arguments so Verilated code can see them, e.g. $value$plusargs
-    // This needs to be called before you create any model
-    contextp->commandArgs(argc, argv);
-
-    // Construct the Verilated model, from Vtb.h generated from Verilating "tb.v".
-    // Using unique_ptr is similar to "Vtb* tb = new Vtb" then deleting at end.
-    // "TOP" will be the hierarchical name of the module.
-    const std::unique_ptr<Vtb> tb{new Vtb{contextp.get(), "TOP"}};
-
-    // Set Vtb's input signals
-    tb->clk = 0;
-    tb->jclk = 0;
-    tb->rst_b = 1;
-    tb->jrst_b = 1;
+    // Set Vtop's input signals
+    top->clk = 0;
 
     // Simulate until $finish
     while (!contextp->gotFinish()) {
@@ -91,22 +87,22 @@ int main(int argc, char** argv, char** env) {
         // new API, and sc_time_stamp() will no longer work.
 
         // Toggle a fast (time/2 period) clock
-        tb->clk = !tb->clk;
+        top->clk = !top->clk;
 
-        if (contextp->time() % (TCLK_PERIOD/2) == 0) { tb->jclk = !tb->jclk;  }
+        //if (contextp->time() % (TCLK_PERIOD/2) == 0) { top->jclk = !top->jclk;  }
         // Toggle control signals on an edge that doesn't correspond
         // to where the controls are sampled; in this example we do
         // this only on a negedge of clk, because we know
         // reset is not sampled there.
-        if (!tb->clk) {
-            if (contextp->time() == 100) { tb->rst_b = 0;  }
-            if (contextp->time() == 200) { tb->rst_b = 0;  }
-            if (contextp->time() == 400) { tb->jrst_b = 0;  }
-            if (contextp->time() == 800) { tb->jrst_b = 0;  }
-        }
-        tb->eval();
+        //if (!top->clk) {
+        //    if (contextp->time() == 100) { top->rst_b = 0;  }
+        //    if (contextp->time() == 200) { top->rst_b = 0;  }
+        //    if (contextp->time() == 400) { top->jrst_b = 0;  }
+        //    if (contextp->time() == 800) { top->jrst_b = 0;  }
+        //}
+        top->eval();
     #if VM_TRACE
-        if (tfp) tfp->dump(contextp->time());
+        if (flag && 0==strcmp(flag, "+trace")) tfp->dump(contextp->time());
     #endif
         // Evaluate model
         // (If you have multiple models being simulated in the same
@@ -114,13 +110,13 @@ int main(int argc, char** argv, char** env) {
         // eval_end_step() on each. See the manual.)
 
         // Read outputs
-        //VL_PRINTF("[%" VL_PRI64 "d] clk=%x data=%x\n", contextp->time(), tb->clk, tb->d);
+        //VL_PRINTF("[%" VL_PRI64 "d] clk=%x data=%x\n", contextp->time(), top->clk, top->d);
     }
 
     // Final model cleanup
-    tb->final();
+    top->final();
     #if VM_TRACE
-        if (tfp) { tfp->close(); tfp = NULL; }
+        if (flag && 0==strcmp(flag, "+trace")) { tfp->close(); tfp = NULL; }
     #endif
     // Coverage analysis (calling write only after the test is known to pass)
 #if VM_COVERAGE

@@ -1,0 +1,53 @@
+/*Copyright 2019-2021 T-Head Semiconductor Co., Ltd.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+$SIM_PATH/logical/ahb/ahb2apb.v
+$SIM_PATH/logical/ahb/ahb.v
+$SIM_PATH/logical/apb/apb_bridge.v
+$SIM_PATH/logical/apb/apb.v
+$SIM_PATH/logical/axi/axi2ahb.v
+$SIM_PATH/logical/axi/axi_err128.v
+$SIM_PATH/logical/axi/axi_fifo_entry.v
+$SIM_PATH/logical/axi/axi_fifo.v
+$SIM_PATH/logical/axi/axi_interconnect128.v
+$SIM_PATH/logical/axi/axi_slave128.v
+$SIM_PATH/logical/gpio/gpio_apbif.v
+$SIM_PATH/logical/gpio/gpio_ctrl.v
+$SIM_PATH/logical/gpio/gpio.v
+$SIM_PATH/logical/mem/f_spsram_32768x128.v
+$SIM_PATH/logical/mem/f_spsram_large.v
+$SIM_PATH/logical/mem/mem_ctrl.v
+$SIM_PATH/logical/mem/ram.v
+$SIM_PATH/logical/pmu/pmu.v
+$SIM_PATH/logical/pmu/px_had_sync.v
+$SIM_PATH/logical/pmu/sync.v
+$SIM_PATH/logical/pmu/tap2_sm.v
+$SIM_PATH/logical/uart/uart_apb_reg.v
+$SIM_PATH/logical/uart/uart_baud_gen.v
+$SIM_PATH/logical/uart/uart_ctrl.v
+$SIM_PATH/logical/uart/uart_receive.v
+$SIM_PATH/logical/uart/uart_trans.v
+$SIM_PATH/logical/uart/uart.v
+$SIM_PATH/logical/common/BUFGCE.v
+$SIM_PATH/logical/common/clk_gen.v
+$SIM_PATH/logical/common/cpu_sub_system_axi.v
+$SIM_PATH/logical/common/err_gen.v
+$SIM_PATH/logical/common/fifo_counter.v
+$SIM_PATH/logical/common/fpga_clk_gen.v
+$SIM_PATH/logical/common/rv_integration_platform.v
+$SIM_PATH/logical/common/timer.v
+$SIM_PATH/logical/common/wid_entry.v
+$SIM_PATH/logical/common/wid_for_axi4.v
+$SIM_PATH/logical/common/soc.v

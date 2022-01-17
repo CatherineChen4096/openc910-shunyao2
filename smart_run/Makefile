@@ -51,7 +51,7 @@ SIM_FLAGS ?=
 
 ifeq ($(DUMP), 1)
 SIM_DUMP :=
-VERILATOR_FLAGS += --trace --trace-threads 4
+VERILATOR_FLAGS += --trace --trace-threads 1
 SIM_FLAGS += +trace
 else
 ifeq (${SIM}, iverilog)
@@ -149,10 +149,10 @@ buildVerilator:
 cleansim:
 	@cd ./$(WORKDIR) && rm -rf simv* csrc ucli.key *.vcs.log novas_dump.log *.fsdb
 cleanVerilator:
-	if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then \
-		if [ ! -d ./$(WORKDIR) ] ; then \
-			mkdir $(WORKDIR) ; \
-		else \
+	if [ ! -d ./$(WORKDIR) ] ; then \
+		mkdir $(WORKDIR) ; \
+	else \
+		if [ -d ./$(WORKDIR)/obj_dir ] ; then \
 			cd ./$(WORKDIR) && rm -rf obj_dir/ && rm -f $(TIMELOG) && touch $(TIMELOG) ; \
 		fi \
 	fi
@@ -226,6 +226,9 @@ else
         $(newline)   The list of valid cases can be obtained by executing: \
         $(newline)   > make showcase ...)
 endif
+
+wave:
+	cd ./$(WORKDIR) && verdi -f $(SIM_PATH)/logical/filelists/verdi.f -ssf *fsdb -top TOP &
 
 # Execute all cases
 regress:

@@ -8,5 +8,7 @@
 #PATH=/usr/bin:/usr/sbin
 #export PATH
 
-export CODE_BASE_PATH=`pwd`/C910_RTL_FACTORY
+export PROJECT_PATH=`pwd`
+export SIM_PATH=$PROJECT_PATH/smart_run
+export CODE_BASE_PATH=$PROJECT_PATH/C910_RTL_FACTORY
 export TOOL_EXTENSION=/software/riscv_xuantie/bin

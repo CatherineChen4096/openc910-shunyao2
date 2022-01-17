@@ -12,11 +12,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-+libext+.v+.h+.V+.sv+
++incdir+$SIM_PATH/logical/tb
 
-+incdir+../logical/tb+
-
--y ../logical/tb
-../logical/tb/tb_verilator.v
-../logical/tb/sim_main.cpp
-
+$SIM_PATH/logical/tb/tb_verilator.v
+-f $SIM_PATH/logical/filelists/ip.fl
+-f $SIM_PATH/logical/filelists/rtl.fl
+$SIM_PATH/logical/tb/TOP.v
