@@ -19,7 +19,7 @@ include ./setup/env_check.mk
 ################################################################################
 # Simulation related
 ################################################################################
-SIM = verilator
+SIM = shunsim
 DUMP ?= 0
 TIMELOG = time.log 
 TIMECMD = time -a -o $(TIMELOG)
@@ -74,44 +74,41 @@ TIMESCALE := -timescale=1ns/100fs
 SIMULATOR_OPT := -sverilog -full64 -kdb -lca -debug_access +nospecify +notimingchecks +lint=TFIPC-L
 SIMULATOR_DEF := +define+no_warning +define+TSMC_NO_WARNING
 SIMULATOR_LOG := -l comp.vcs.log
-ifeq ($(UPF), on)
-SIMULATOR_POWER_OPT := -upf ../impl/upf/example_cpu_power_spec.upf +define+UPF_INCLUDED
-SIMV_POWER_OPT      := +fsdb+power +fsdb+all 
-else
-SIMULATOR_POWER_OPT := 
-SIMV_POWER_OPT      := 
-endif
+    ifeq ($(UPF), on)
+    SIMULATOR_POWER_OPT := -upf ../impl/upf/example_cpu_power_spec.upf +define+UPF_INCLUDED
+    SIMV_POWER_OPT      := +fsdb+power +fsdb+all 
+    else
+    SIMULATOR_POWER_OPT := 
+    SIMV_POWER_OPT      := 
+    endif
 else 
     ifeq ($(SIM), nc) 
-    TIMESCALE := -timescale 1ns/100fs
-    SIMULATOR_OPT := +v2k -sysv +sv +access+wrc +notimingcheck -default_ext verilog -elaborate +tcl+../setup/nc.tcl
-    SIMULATOR_DEF := +define+no_warning +define+TSMC_NO_WARNING +define+VMC +define+NC_SIM 
-    SIMULATOR_LOG := -l comp.nc.log
-    else
-        ifeq ($(SIM), iverilog)
-          TIMESCALE := 
-          SIMULATOR_OPT := -o xuantie_core.vvp -Diverilog=1 -g2012 
-          SIMULATOR_DEF := -DIVERILOG_SIM
-          SIMULATOR_LOG := 
-        else
-            ifeq ($(SIM), verilator)
-    		  TIMESCALE := --timescale 1ns/100fs
-              SIMULATOR_OPT := -Os -x-assign 0 --threads $(THREADS) -Wno-fatal $(VERILATOR_FLAGS)
-              SIMULATOR_DEF := -cc --exe --top-module top ../vrlt_cfg.vlt
-              SIMULATOR_LOG := 
-            endif
-        endif
+        TIMESCALE := -timescale 1ns/100fs
+        SIMULATOR_OPT := +v2k -sysv +sv +access+wrc +notimingcheck -default_ext verilog -elaborate +tcl+../setup/nc.tcl
+        SIMULATOR_DEF := +define+no_warning +define+TSMC_NO_WARNING +define+VMC +define+NC_SIM 
+        SIMULATOR_LOG := -l comp.nc.log
+    else ifeq ($(SIM), iverilog)
+        TIMESCALE := 
+        SIMULATOR_OPT := -o xuantie_core.vvp -Diverilog=1 -g2012 
+        SIMULATOR_DEF := -DIVERILOG_SIM
+        SIMULATOR_LOG := 
+    else ifeq ($(SIM), verilator)
+        TIMESCALE := --timescale 1ns/100fs
+        SIMULATOR_OPT := -Os -x-assign 0 --threads $(THREADS) -Wno-fatal $(VERILATOR_FLAGS)
+        SIMULATOR_DEF := -cc --exe --top-module top ../vrlt_cfg.vlt
+        SIMULATOR_LOG := 
+    else ifeq ($(SIM), shunsim)
+        SIMULATOR_OPT := --config $(SIM_PATH)/shunsim.yaml
+        SIMULATOR_LOG := --log shunsim_comp.log
     endif
 endif
 
 ifeq ($(SIM), iverilog)
     SIM_FILELIST := $(SIM_FILELIST) -f ${CODE_BASE_PATH}/gen_rtl/filelists/C910_asic_rtl.fl -c ../logical/filelists/smart.fl -c ../logical/filelists/tb.fl
-else
-    ifeq ($(SIM), verilator)
+else ifeq ($(SIM), verilator)
     SIM_FILELIST := $(SIM_FILELIST) -f ../logical/filelists/sim_verilator.fl
-    else
+else
     SIM_FILELIST := $(SIM_FILELIST) -f ../logical/filelists/sim.fl
-    endif
 endif
 
 compile:
@@ -120,24 +117,24 @@ compile:
 ifeq ($(SIM), vcs)
 	@make -s cleansim
 	@cd ./$(WORKDIR) && vcs $(SIMULATOR_OPT) $(TIMESCALE) $(SIMULATOR_DEF) $(SIM_FILELIST) $(SIM_DUMP) $(SIMULATOR_LOG) $(SIMULATOR_POWER_OPT) 
-else 
-ifeq ($(SIM), nc) 
-@cd ./$(WORKDIR) && irun $(SIMULATOR_OPT) $(TIMESCALE) $(SIMULATOR_DEF) $(SIM_FILELIST) $(SIM_DUMP) $(SIMULATOR_LOG)
-else
-ifeq ($(SIM), iverilog)
-@cd ./$(WORKDIR) && iverilog $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIM_FILELIST) $(SIM_DUMP) $(SIMULATOR_LOG)
-else
-ifeq ($(SIM), verilator)
+else ifeq ($(SIM), nc) 
+	@cd ./$(WORKDIR) && irun $(SIMULATOR_OPT) $(TIMESCALE) $(SIMULATOR_DEF) $(SIM_FILELIST) $(SIM_DUMP) $(SIMULATOR_LOG)
+else ifeq ($(SIM), iverilog)
+	@cd ./$(WORKDIR) && iverilog $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIM_FILELIST) $(SIM_DUMP) $(SIMULATOR_LOG)
+else ifeq ($(SIM), verilator)
 	@echo "[verilator] Generating C++ files..." >> ./$(WORKDIR)/$(TIMELOG)
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
 	@echo "verilator $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST)" >> ./$(WORKDIR)/$(TIMELOG)
 	@cd ./$(WORKDIR) && $(TIMECMD) verilator $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST) 2>&1 | tee -a vrlt_com.log
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
+else ifeq ($(SIM), shunsim)
+	@echo "[shunsim] Generating C++ files..." >> ./$(WORKDIR)/$(TIMELOG)
+	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
+	@echo "shunsim $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST)" >> ./$(WORKDIR)/$(TIMELOG)
+	@cd ./$(WORKDIR) && $(TIMECMD) shunsim $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST)
+	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
 else	
 	@echo "  [THead-smart] Please specify SIM = vcs to use VCS, or SIM = nc ,or SIM = verilator to use verilator ..."
-endif
-endif
-endif 
 endif 
 
 buildVerilator:
@@ -206,20 +203,22 @@ ifeq ($(findstring $(CASE), $(CASE_LIST)), $(CASE))
 	@make -s buildcase CASE=$(CASE)
 ifeq ($(SIM), vcs)
 	cd ./$(WORKDIR) && ./simv -l run.vcs.log $(SIMV_POWER_OPT)
+else ifeq ($(SIM), nc)	
+	cd ./$(WORKDIR) && irun -R -l run.irun.log
+else ifeq ($(SIM), verilator)
+	if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then make buildVerilator ; fi
+	@echo "[Vtop] Simulation..." >> ./$(WORKDIR)/$(TIMELOG)
+	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
+	cd ./$(WORKDIR) && $(TIMECMD) obj_dir/Vtop $(SIM_FLAGS) 2>&1 | tee sim.log
+	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
+else ifeq ($(SIM), shunsim)
+	if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then make buildVerilator ; fi
+	@echo "[Vtop] Simulation..." >> ./$(WORKDIR)/$(TIMELOG)
+	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
+	cd ./$(WORKDIR) && $(TIMECMD) obj_dir/Vtop $(SIM_FLAGS) 2>&1 | tee sim.log
+	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
 else
-        ifeq ($(SIM), nc)	
-		cd ./$(WORKDIR) && irun -R -l run.irun.log
-        else
-            ifeq ($(SIM), verilator)
-				if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then make buildVerilator ; fi
-				@echo "[Vtop] Simulation..." >> ./$(WORKDIR)/$(TIMELOG)
-				@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
-				cd ./$(WORKDIR) && $(TIMECMD) obj_dir/Vtop $(SIM_FLAGS) 2>&1 | tee sim.log
-				@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
-            else
-	        cd ./$(WORKDIR) && vvp xuantie_core.vvp 
-            endif
-        endif
+	cd ./$(WORKDIR) && vvp xuantie_core.vvp 
 endif
 else
 	$(error Argument CASE=xxx is not valid: \
@@ -228,7 +227,8 @@ else
 endif
 
 wave:
-	cd ./$(WORKDIR) && verdi -f $(SIM_PATH)/logical/filelists/verdi.f -ssf *fsdb -top TOP &
+	cd ./$(WORKDIR) && vcd2fsdb openc910.vcd && verdi -f $(SIM_PATH)/logical/filelists/verdi.f -ssf openc910.vcd.fsdb -top TOP
+	rm -rf ./$(WORKDIR)/openc910.vcd
 
 # Execute all cases
 regress:

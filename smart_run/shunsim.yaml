@@ -1,0 +1,102 @@
+name: xuantie_cfg
+env:
+    CODE_BASE_PATH: /home/yangkai/1_SA/1_Verilator/openc910-shunyao/C910_RTL_FACTORY
+    SIM_PATH: /home/yangkai/1_SA/1_Verilator/openc910-shunyao/smart_run 
+    TOOL_EXTENSION: /software/riscv_xuantie/bin
+    PROJECT_PATH: /home/yangkai/1_SA/1_Verilator/openc910-shunyao
+ShunsimOpt:
+    - name: default_opts
+      auto_gen_ctb: 0
+      interactive_mode: 0
+
+ClockOpt:
+    - name: clk_1G
+      frequency: 1G
+      duty: 50
+      init_value: 0
+      first_toggle: 10ns
+      connection: clk
+
+VrltOpt:
+    - name: build_opts
+      trace: 1
+      threads: 4
+      #trace_threads: 1
+      timescale: 1ns/1ps
+      top_module: top
+      exe: 1
+      #vrlt_cfg in VrltOpt is not compatible with VrltCfg
+      #vrlt_cfg: $SIM_PATH/vrlt_cfg.vlt
+      filelist: ${SIM_PATH}/logical/filelists/sim_verilator.fl
+      #All left options could be put in vrlt_opts
+      vrlt_opts: -Os -x-assign 0 --cc /home/yangkai/1_SA/1_Verilator/openc910-shunyao/smart_run/vrlt_cfg.vlt
+
+VrltCfg:
+    - name: split_var_1 
+      type: split_var
+      module_name: ct_ifu_ipctrl
+      var_name: missigned_bry_vld
+    - name: split_var_2 
+      type: split_var
+      module_name: ct_idu_dep_reg_src2_entry
+      var_name: x_read_data
+    - name: split_var_3 
+      type: split_var
+      module_name: ct_l2c_data
+      var_name: data_ram_cen
+    - name: split_var_4 
+      type: split_var
+      module_name: ct_cp0_regs
+      var_name: local_icg_en
+    - name: split_var_5 
+      type: split_var
+      module_name: plic_hreg_busif
+      var_name: [hart_int_cmplt_vld_tmp,hart_int_claim_vld_tmp,mie_lst_read_tmp,sie_lst_read_tmp]
+    - name: split_var_6 
+      type: split_var
+      module_name: plic_32to1_arb
+      var_name: tmp_sel_out
+    - name: split_var_7 
+      type: split_var
+      module_name: plic_kid_busif
+      var_name: prio_lst_read_tmp
+    - name: split_var_8 
+      type: split_var
+      module_name: plic_granu_arb
+      var_name: tmp_out
+    - name: split_var_9 
+      type: split_var
+      module_name: plic_hreg_busif
+      var_name: [hart_claim_read_data_tmp,hart_ict_read_data_tmp]
+    - name: split_var_10 
+      type: split_var
+      module_name: csky_apb_1tox_matrix
+      var_name: [slv_pready_data_pre,slv_pready_pslverr_pre]
+    - name: split_var_11 
+      type: split_var
+      module_name: plic_kid_busif
+      var_name: ip_read_data_tmp
+    - name: split_var_12 
+      type: split_var
+      module_name: plic_granu_arb
+      var_name: tmp_pos_out
+    - name: split_var_13 
+      type: split_var
+      module_name: ct_idu_rf_pipe0_decd
+      var_name: decd_imm_sel
+    - name: split_var_14 
+      type: split_var
+      module_name: ct_idu_rf_pipe1_decd
+      var_name: decd_imm_sel
+    - name: split_var_15 
+      type: split_var
+      module_name: ct_idu_rf_prf_eregfile
+      var_name: fesr_acc_with_fcr
+    - name: split_var_16 
+      type: split_var
+      module_name: ct_idu_id_decd
+      var_name: decd_sel
+    - name: split_var_17 
+      type: split_var
+      module_name: ct_iu_bju_pcfifo
+      var_name: [pcfifo_pop2_bypass_sel,pcfifo_pop1_bypass_sel,pcfifo_pop0_bypass_sel]
