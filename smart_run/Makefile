@@ -107,6 +107,8 @@ ifeq ($(SIM), iverilog)
     SIM_FILELIST := $(SIM_FILELIST) -f ${CODE_BASE_PATH}/gen_rtl/filelists/C910_asic_rtl.fl -c ../logical/filelists/smart.fl -c ../logical/filelists/tb.fl
 else ifeq ($(SIM), verilator)
     SIM_FILELIST := $(SIM_FILELIST) -f ../logical/filelists/sim_verilator.fl
+else ifeq ($(SIM), shunsim)
+    SIM_FILELIST := 
 else
     SIM_FILELIST := $(SIM_FILELIST) -f ../logical/filelists/sim.fl
 endif
