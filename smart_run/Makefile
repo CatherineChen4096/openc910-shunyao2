@@ -98,6 +98,7 @@ else
         SIMULATOR_DEF := -cc --exe --top-module top ../vrlt_cfg.vlt
         SIMULATOR_LOG := 
     else ifeq ($(SIM), shunsim)
+        TIMESCALE := --timescale 1ns/100fs
         SIMULATOR_OPT := --config $(SIM_PATH)/shunsim.yaml
         SIMULATOR_LOG := --log shunsim_comp.log
     endif
@@ -143,7 +144,7 @@ buildVerilator:
 	@cp ./logical/tb/Makefile_obj ./$(WORKDIR)/Makefile_obj
 	@echo "[g++] Compiling C++ files..." >> ./$(WORKDIR)/$(TIMELOG)
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
-	@cd ./$(WORKDIR) && $(TIMECMD) make -j4 -C obj_dir -f ../Makefile_obj
+	@cd ./$(WORKDIR) && $(TIMECMD) make -j -C obj_dir -f ../Makefile_obj
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
 cleansim:
 	@cd ./$(WORKDIR) && rm -rf simv* csrc ucli.key *.vcs.log novas_dump.log *.fsdb
@@ -193,7 +194,7 @@ runVerilator:
 	@cd ./$(WORKDIR) && time obj_dir/Vtop
 Vtop = ./$(WORKDIR)/obj_dir/Vtop
 runcase:
-		@make cleanVerilator 
+		#@make cleanVerilator 
 ifeq ($(CASE),)
 	$(error Please specify CASE=xxx on the command line, like: \
         $(newline)   > make buildcase CASE=xxx... \
@@ -201,14 +202,18 @@ ifeq ($(CASE),)
         $(newline)   > make showcase ...)
 endif
 ifeq ($(findstring $(CASE), $(CASE_LIST)), $(CASE))
+ifeq ($(SIM), vcs)
+	if [ ! -e ./$(WORKDIR)/simv ] ; then make -s compile ; fi
+else ifeq ($(SIM), shunsim)
 	if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then make -s compile ; fi
+endif
 	@make -s buildcase CASE=$(CASE)
 ifeq ($(SIM), vcs)
 	cd ./$(WORKDIR) && ./simv -l run.vcs.log $(SIMV_POWER_OPT)
 else ifeq ($(SIM), nc)	
 	cd ./$(WORKDIR) && irun -R -l run.irun.log
 else ifeq ($(SIM), verilator)
-	if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then make buildVerilator ; fi
+	make buildVerilator
 	@echo "[Vtop] Simulation..." >> ./$(WORKDIR)/$(TIMELOG)
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
 	cd ./$(WORKDIR) && $(TIMECMD) obj_dir/Vtop $(SIM_FLAGS) 2>&1 | tee sim.log

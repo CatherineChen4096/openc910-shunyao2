@@ -208,6 +208,9 @@ module tb();
       cycle_count[31:0] <= 32'b1;
     else 
       cycle_count[31:0] <= cycle_count[31:0] + 1'b1;
+        if(cycle_count % 5000 == 0) begin 
+            $display("Time %0p ns: clk=%0x", $time, clk);
+        end 
   end
   
   
@@ -333,7 +336,6 @@ module tb();
   
   assign jtg_tdi = 1'b0;
   assign uart0_sin = 1'b1;
-  
   
   soc x_soc(
     .i_pad_clk           ( clk                  ),

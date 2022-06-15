@@ -7,7 +7,8 @@
 
 // For std::unique_ptr
 #include <memory>
-
+#include <iostream>
+using namespace std;
 // Include common routines
 #include <verilated.h>
 
@@ -17,14 +18,55 @@
     #include <verilated_vcd_c.h>
 #endif
 
-#define CLK_PERIOD          2
+#define CLK_PERIOD          10000
 #define TCLK_PERIOD         40
 // Legacy function required only so linking works on Cygwin and MSVC++
 double sc_time_stamp() { return 0; }
 
-int main(int argc, char** argv, char** env) {
-    // This is a more complicated example, please also see the simpler examples/make_hello_c.
+//Real-time CPS printing
+#define RDTSC(val) \
+{ \
+	unsigned int hi, lo; \
+	asm volatile("rdtsc" : "=a"(lo), "=d"(hi)); \
+	(val) = ((unsigned long long)lo ) | (((unsigned long long)hi) <<32); \
+}
 
+unsigned long long counter_array[200000];
+int my_index =0;
+unsigned long long start_time=0;
+unsigned long long end_time=0;
+unsigned long long rt_time=0;
+unsigned long long counter_CPS[4];
+unsigned long long counter_slv_CPS[4];
+unsigned long long counter_mst_CPS[4];
+unsigned long long counter_dut_CPS[4];
+uint32_t count_print =0;
+unsigned long long time_before_eval;
+unsigned long long time_after_eval;
+uint32_t count_cycle=0;
+uint32_t unit_interval =0;
+
+void record_start_time(){
+	RDTSC(start_time);
+}
+void record_end_time(){
+	RDTSC(end_time);
+}
+
+void record_time(){
+	unsigned long long current_time;
+	if (my_index > 100000) return;
+	RDTSC(current_time);
+	counter_array[my_index++]=current_time -start_time;
+}
+int main(int argc, char** argv, char** env) {
+    //record start time
+    record_start_time();
+    RDTSC(counter_CPS[0]);
+    sleep(1);
+    RDTSC(counter_CPS[1]);
+    unit_interval =counter_CPS[1] - counter_CPS[0];
+    //cout << "Unit Time: " << dec << unit_interval << " CPU tick[0]: " << counter_CPS[0] << " CPU tick[1]: " << counter_CPS[1] << endl;
     // Prevent unused variable warnings
     if (false && argc && argv && env) {}
 
@@ -89,6 +131,30 @@ int main(int argc, char** argv, char** env) {
         // Toggle a fast (time/2 period) clock
         top->clk = !top->clk;
 
+        if((contextp->time() % 50000000) == 0) {
+            count_print =1;
+            cout << "Time: " << dec << contextp->time()/1000 << " ns, clk=" << short(top->clk) << endl;
+            //VL_PRINTF("time:\t %lu\n", contextp -> time());
+            if (count_cycle % 2 == 0){
+            	RDTSC(counter_CPS[0]);
+            	counter_CPS[2] = contextp->time();
+            }
+            else{
+            	RDTSC(counter_CPS[1]);
+            	counter_CPS[3] = contextp->time();
+                //VL_PRINTF("Time: %" VL_PRI64 "d clk=%x\n", contextp->time(), top->clk);
+            	//cout << "SIM Time: " << dec << (counter_CPS[3] -counter_CPS[2]) << "CPU tick[0]: " << counter_CPS[0] <<" CPU tick[1]: " << counter_CPS[1] << " CPU time: " << ((counter_CPS[1] -counter_CPS[0])/unit_interval) << endl;
+            	//if (((counter_CPS[1] -counter_CPS[0])/unit_interval) !=0){
+            	//	cout << "===RT-CPS:" << dec << ((counter_CPS[3] -counter_CPS[2])/2)/((counter_CPS[1]- counter_CPS[0])/unit_interval) << endl;
+            	//}
+            }
+            count_cycle++;
+            //cout << "[" << dec << contextp->time() << "] clk=" << short(hw->hbf_clk_0) << ", rst=" << short(hw->pll_sys0_rst_n) << endl;
+        }
+        else
+        {
+            count_print =0;
+        }
         //if (contextp->time() % (TCLK_PERIOD/2) == 0) { top->jclk = !top->jclk;  }
         // Toggle control signals on an edge that doesn't correspond
         // to where the controls are sampled; in this example we do
@@ -112,7 +178,12 @@ int main(int argc, char** argv, char** env) {
         // Read outputs
         //VL_PRINTF("[%" VL_PRI64 "d] clk=%x data=%x\n", contextp->time(), top->clk, top->d);
     }
-
+    record_end_time();
+    //cout << "START_TIME:" << dec << start_time/unit_interval << " END_TIME:" << dec << end_time/unit_interval << endl;
+    cout << "CPU_TIME:" << dec << end_time/unit_interval - start_time/unit_interval << " seconds" << endl;
+    //   
+    cout << "===>AVerage-CPS:" <<dec << (contextp->time()/10000)/((end_time -start_time)/unit_interval) << endl;
+    
     // Final model cleanup
     top->final();
     #if VM_TRACE
