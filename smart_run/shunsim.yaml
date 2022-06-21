@@ -10,8 +10,8 @@ ShunsimOpt:
       interactive_mode: 0
 
 ClockOpt:
-    - name: clk_1G
-      frequency: 1G
+    - name: clk_100M
+      frequency: 100M
       duty: 50
       init_value: 0
       first_toggle: 10ns
@@ -19,8 +19,8 @@ ClockOpt:
 
 VrltOpt:
     - name: build_opts
-      trace: 1
-      threads: 4
+      trace: 0
+      threads: 32
       #trace_threads: 1
       timescale: 1ns/1ps
       top_module: top
@@ -29,7 +29,7 @@ VrltOpt:
       #vrlt_cfg: $SIM_PATH/vrlt_cfg.vlt
       filelist: ${SIM_PATH}/logical/filelists/sim_verilator.fl
       #All left options could be put in vrlt_opts
-      vrlt_opts: -Os -x-assign 0 --cc /home/yangkai/1_SA/1_Verilator/openc910-shunyao/smart_run/vrlt_cfg.vlt
+      vrlt_opts: -Os -x-assign 0 --cc ${SIM_PATH}/vrlt_cfg.vlt ${SIM_PATH}/logical/tb/sim_main.cpp
 
 VrltCfg:
     - name: split_var_1 

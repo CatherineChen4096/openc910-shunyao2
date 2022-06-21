@@ -260,6 +260,7 @@ memlist:
 
 clean:
 	@cd ./$(WORKDIR) && rm -rf * 
+	@make -s cleanVerilator
 
 help:
 	@echo "  ########## Smart Help Info ##########"

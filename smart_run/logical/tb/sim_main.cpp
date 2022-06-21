@@ -66,7 +66,7 @@ int main(int argc, char** argv, char** env) {
     sleep(1);
     RDTSC(counter_CPS[1]);
     unit_interval =counter_CPS[1] - counter_CPS[0];
-    //cout << "Unit Time: " << dec << unit_interval << " CPU tick[0]: " << counter_CPS[0] << " CPU tick[1]: " << counter_CPS[1] << endl;
+    cout << "Unit Time: " << dec << unit_interval << " CPU tick[0]: " << counter_CPS[0] << " CPU tick[1]: " << counter_CPS[1] << endl;
     // Prevent unused variable warnings
     if (false && argc && argv && env) {}
 

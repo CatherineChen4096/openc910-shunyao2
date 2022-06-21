@@ -1,0 +1,9 @@
+shunsim_mp -i shunsim_mp.yaml
+make buildcase CASE=coremark WORKDIR=sim_db
+cp ./Makefile_mp sim_db/Makefile 
+cp ./node_node_TOP_simmain.cpp sim_db
+cd sim_db 
+make comp -j
+make build -j
+make run
+

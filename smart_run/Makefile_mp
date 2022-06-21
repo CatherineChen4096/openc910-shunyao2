@@ -1,0 +1,47 @@
+CXX = clang++
+LINK = clang++
+
+build: Vnode_TOP Vnode_core0 Vnode_core1
+
+Vnode_TOP:
+	$(MAKE) -C TOP_db/obj_dir -f ../../Vnode_TOP.mk ../../Vnode_TOP CXX=$(CXX) LINK=$(LINK)
+Vnode_core0:
+	$(MAKE) -C CORE_db/obj_dir -f ../../Vnode_core0.mk ../../Vnode_core0 CXX=$(CXX) LINK=$(LINK)
+Vnode_core1:
+	$(MAKE) -C CORE_db/obj_dir -f ../../Vnode_core1.mk ../../Vnode_core1 CXX=$(CXX) LINK=$(LINK)
+
+
+comp: comp_TOP comp_CORE
+
+comp_TOP:
+	$(MAKE) -C /home/yangkai/1_SA/1_Verilator/openc910-shunyao/smart_run/sim_db/TOP_db/obj_dir -f ../../../Makefile_obj TOP=top_top -j
+comp_CORE:
+	$(MAKE) -C /home/yangkai/1_SA/1_Verilator/openc910-shunyao/smart_run/sim_db/CORE_db/obj_dir -f ../../../Makefile_obj TOP=ct_core_top -j
+vrlt: vrlt_TOP vrlt_CORE
+
+vrlt_TOP:
+	$(MAKE) -C /home/yangkai/1_SA/1_Verilator/openc910-shunyao/smart_run/sim_db/TOP_db/obj_dir -f Vtop_top.mk -j
+vrlt_CORE:
+	$(MAKE) -C /home/yangkai/1_SA/1_Verilator/openc910-shunyao/smart_run/sim_db/CORE_db/obj_dir -f Vct_core_top.mk -j
+
+
+RUNTIME_OPT = +trace
+
+run:
+	./Brain > /dev/null &
+	sleep 3
+	./Vnode_TOP $(RUNTIME_OPT) &
+	./Vnode_core0 $(RUNTIME_OPT) > /dev/null &
+	./Vnode_core1 $(RUNTIME_OPT) > /dev/null
+clean:
+	rm -f Vnode_TOP Vnode_core0 Vnode_core1
+	rm -f *.o *.d
+clean_all:
+
+clean_vrlt:
+	rm -f  TOP_db/obj_dir/*.o  TOP_db/obj_dir/*.d  TOP_db/obj_dir/*__ALL.a
+	rm -f  CORE_db/obj_dir/*.o  CORE_db/obj_dir/*.d  CORE_db/obj_dir/*__ALL.a
+
+clean_vrlt_all:
+	rm -rf TOP_db/
+	rm -rf CORE_db/
