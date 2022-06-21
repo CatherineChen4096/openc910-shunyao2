@@ -142,11 +142,11 @@ int main(int argc, char** argv, char** env) {
             else{
             	RDTSC(counter_CPS[1]);
             	counter_CPS[3] = contextp->time();
-                //VL_PRINTF("Time: %" VL_PRI64 "d clk=%x\n", contextp->time(), top->clk);
-            	//cout << "SIM Time: " << dec << (counter_CPS[3] -counter_CPS[2]) << "CPU tick[0]: " << counter_CPS[0] <<" CPU tick[1]: " << counter_CPS[1] << " CPU time: " << ((counter_CPS[1] -counter_CPS[0])/unit_interval) << endl;
-            	//if (((counter_CPS[1] -counter_CPS[0])/unit_interval) !=0){
-            	//	cout << "===RT-CPS:" << dec << ((counter_CPS[3] -counter_CPS[2])/2)/((counter_CPS[1]- counter_CPS[0])/unit_interval) << endl;
-            	//}
+                VL_PRINTF("Time: %" VL_PRI64 "d clk=%x\n", contextp->time(), top->clk);
+            	cout << "SIM Time: " << dec << (counter_CPS[3] -counter_CPS[2]) << "CPU tick[0]: " << counter_CPS[0] <<" CPU tick[1]: " << counter_CPS[1] << " CPU time: " << ((counter_CPS[1] -counter_CPS[0])/unit_interval) << endl;
+            	if (((counter_CPS[1] -counter_CPS[0])/unit_interval) !=0){
+            		cout << "===RT-CPS:" << dec << ((counter_CPS[3] -counter_CPS[2])/2)/((counter_CPS[1]- counter_CPS[0])/unit_interval) << endl;
+            	}
             }
             count_cycle++;
             //cout << "[" << dec << contextp->time() << "] clk=" << short(hw->hbf_clk_0) << ", rst=" << short(hw->pll_sys0_rst_n) << endl;

@@ -104,7 +104,7 @@ module top(
   initial
   begin
     rst_bCnt = 0;
-    rst_b = 1;
+    rst_b = 0;
     //#100;
     //rst_b = 0;
     //#100;
@@ -261,7 +261,7 @@ module top(
     begin
       if(retire_inst_in_period[31:0] == 0)begin
         $display("*************************************************************");
-        $display("* Error: There is no instructions retired in the last %d cycles! *", `LAST_CYCLE);
+        $display("* Error: %0t There is no instructions retired in the last %d cycles! *", $time, `LAST_CYCLE);
         $display("*              Simulation Fail and Finished!                *");
         $display("*************************************************************");
         //#10;
