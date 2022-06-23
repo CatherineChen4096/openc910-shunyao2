@@ -472,6 +472,11 @@ module ct_core(
   rtu_pad_retire2_pc,
   rtu_yy_xx_dbgon,
   rtu_yy_xx_flush,
+//`ifdef SHUNSIM_MP
+  value0,
+  value1,
+  value2,
+//`endif
   rtu_yy_xx_retire0,
   rtu_yy_xx_retire0_normal,
   rtu_yy_xx_retire1,
@@ -480,6 +485,11 @@ module ct_core(
 
 //&Ports("compare", "../../../gen_rtl/cpu/rtl/core_golden_port.v");
 // &Ports; @28
+//`ifdef SHUNSIM_MP
+output [63:0] value0;
+output [63:0] value1;
+output [63:0] value2;
+//`endif
 input   [39 :0]  biu_cp0_apb_base;                       
 input            biu_cp0_cmplt;                          
 input   [2  :0]  biu_cp0_coreid;                         
@@ -2462,6 +2472,9 @@ wire    [6  :0]  vfpu_rtu_pipe6_iid;
 wire             vfpu_rtu_pipe7_cmplt;                   
 wire    [6  :0]  vfpu_rtu_pipe7_iid;                     
 
+assign value0 = x_ct_iu_top.x_ct_iu_rbus.rbus_pipe0_wb_data[63:0];
+assign value1 = x_ct_iu_top.x_ct_iu_rbus.rbus_pipe1_wb_data[63:0];
+assign value2 = x_ct_lsu_top.x_ct_lsu_ld_wb.ld_wb_preg_data_sign_extend[63:0];
 
 // &Force("input", "pad_yy_scan_mode"); @32
 // &Force("output","rtu_yy_xx_dbgon"); @33

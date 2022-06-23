@@ -14,15 +14,15 @@ Vnode_core1:
 comp: comp_TOP comp_CORE
 
 comp_TOP:
-	$(MAKE) -C /home/yangkai/1_SA/1_Verilator/openc910-shunyao/smart_run/sim_db/TOP_db/obj_dir -f ../../../Makefile_obj TOP=top_top -j
+	$(MAKE) -C TOP_db/obj_dir -f ../../../Makefile_obj TOP=top_top -j
 comp_CORE:
-	$(MAKE) -C /home/yangkai/1_SA/1_Verilator/openc910-shunyao/smart_run/sim_db/CORE_db/obj_dir -f ../../../Makefile_obj TOP=ct_core_top -j
+	$(MAKE) -C CORE_db/obj_dir -f ../../../Makefile_obj TOP=ct_core_top -j
 vrlt: vrlt_TOP vrlt_CORE
 
 vrlt_TOP:
-	$(MAKE) -C /home/yangkai/1_SA/1_Verilator/openc910-shunyao/smart_run/sim_db/TOP_db/obj_dir -f Vtop_top.mk -j
+	$(MAKE) -C TOP_db/obj_dir -f Vtop_top.mk -j
 vrlt_CORE:
-	$(MAKE) -C /home/yangkai/1_SA/1_Verilator/openc910-shunyao/smart_run/sim_db/CORE_db/obj_dir -f Vct_core_top.mk -j
+	$(MAKE) -C CORE_db/obj_dir -f Vct_core_top.mk -j
 
 
 RUNTIME_OPT = +trace

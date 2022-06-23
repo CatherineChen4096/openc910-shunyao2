@@ -297,9 +297,9 @@ module top(
     // value1           <= `CPU_TOP.core0_pad_wb1_data[63:0];
     // value2           <= `CPU_TOP.core0_pad_wb2_data[63:0];
 `ifdef SHUNSIM_MP
-    //value0              <= `CPU_TOP.x_ct_top_0.x_ct_core.x_ct_iu_top.x_ct_iu_rbus.rbus_pipe0_wb_data[63:0];
-    //value1              <= `CPU_TOP.x_ct_top_0.x_ct_core.x_ct_iu_top.x_ct_iu_rbus.rbus_pipe1_wb_data[63:0];
-    //value2              <= `CPU_TOP.x_ct_top_0.x_ct_core.x_ct_lsu_top.x_ct_lsu_ld_wb.ld_wb_preg_data_sign_extend[63:0];
+    value0              <= `CPU_TOP.x_ct_top_0.x_ct_core.value0;
+    value1              <= `CPU_TOP.x_ct_top_0.x_ct_core.value1;
+    value2              <= `CPU_TOP.x_ct_top_0.x_ct_core.value2;
 `else
     value0              <= `CPU_TOP.x_ct_top_0.x_ct_core.x_ct_iu_top.x_ct_iu_rbus.rbus_pipe0_wb_data[63:0];
     value1              <= `CPU_TOP.x_ct_top_0.x_ct_core.x_ct_iu_top.x_ct_iu_rbus.rbus_pipe1_wb_data[63:0];

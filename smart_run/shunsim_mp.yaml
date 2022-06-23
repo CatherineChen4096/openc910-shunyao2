@@ -2,14 +2,14 @@ ShunsimSet:
     mode: MP
     shun_thread_num: 5
     vrlt_auto_bypass: 1
-    workdir: sim_db
+    workdir: sim_db_xmr
     compiler: clang++
     sync_strategy: 1
 
 ClockSet:
   - name: c1
-    clockid: mClk_0100M
-    frequency: 0100M
+    clockid: mClk_1000M
+    frequency: 1000M
     duty: 50
     initvalue: 0
     firsttoggle: 500ps
@@ -21,7 +21,7 @@ GroupSet:
     modulefile: logical/tb/tb_verilator.v
     clockconnect:
       - name: cc1
-        clockid: mClk_0100M 
+        clockid: mClk_1000M 
         signal: clk 
     vrltopts:
       - name: default_opt 
@@ -36,16 +36,16 @@ GroupSet:
     scopemodule: ct_core
     modulefile: ../C910_RTL_FACTORY/gen_rtl/cpu/rtl/ct_core.v
     clockconnect: 
-      - name: mClk_0100M 
-        clockid: mClk_0100M 
+      - name: cc2 
+        clockid: mClk_1000M 
         signal: forever_cpuclk 
     vrltopts:
       - name: default_opt 
         trace: 1
-        threads: 8
+        threads: 4
         timescale: 1ns/1ps 
         filelist: logical/filelists/sim_verilator.fl 
-        vrlt_opts: --cc -Os --x-initial 0 --stats ./vrlt_cfg.vlt
+        vrlt_opts: --cc -Os --x-initial 0 --stats +define+SHUNSIM_MP ./vrlt_cfg.vlt
 
 NodeSet:
   - name: node_TOP

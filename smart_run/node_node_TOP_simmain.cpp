@@ -17,7 +17,7 @@ using HW = Vtop_top;
 
 uint64_t GlobalMainTime = 0;
 
-#define CLK_PERIOD          10000
+#define CLK_PERIOD          1000
 #define TCLK_PERIOD         4
 
 //Real-time CPS printing
@@ -75,9 +75,9 @@ int main(int argc, char** argv, char**env)
         contextp->traceEverOn(true);
         tfp = new VerilatedVcdC;
         hw->trace(tfp, 99);
-        shunobj.fulleval();
         tfp->open("node_node_TOP_test.vcd");
     };
+    shunobj.fulleval();
 #endif
 
    shunobj.setup();
@@ -94,8 +94,8 @@ int main(int argc, char** argv, char**env)
     unit_interval =counter_CPS[1] - counter_CPS[0];
     cout << "Unit Time: " << dec << unit_interval << " CPU tick[0]: " << counter_CPS[0] << " CPU tick[1]: " << counter_CPS[1] << endl;
 
-    //while (!contextp->gotFinish()) {
-    while (contextp->time()<400000000) {
+    while (!contextp->gotFinish()) {
+    //while (contextp->time()<4000000000) {
         //Info ("loop %d", loop);
         if((contextp->time() % 50000000) == 0) {
             count_print =1;
@@ -112,7 +112,7 @@ int main(int argc, char** argv, char**env)
                 //VL_PRINTF("Time: %" VL_PRI64 "d clk=%x\n", contextp->time(), top->clk);
             	cout << "SIM Time: " << dec << (counter_CPS[3] -counter_CPS[2]) << "CPU tick[0]: " << counter_CPS[0] <<" CPU tick[1]: " << counter_CPS[1] << " CPU time: " << ((counter_CPS[1] -counter_CPS[0])/unit_interval) << endl;
             	if (((counter_CPS[1] -counter_CPS[0])/unit_interval) !=0){
-            		cout << "===RT-CPS:" << dec << ((counter_CPS[3] -counter_CPS[2])/10000)/((counter_CPS[1]- counter_CPS[0])/unit_interval) << endl;
+            		cout << "===RT-CPS:" << dec << ((counter_CPS[3] -counter_CPS[2])/CLK_PERIOD)/((counter_CPS[1]- counter_CPS[0])/unit_interval) << endl;
             	}
             }
             count_cycle++;
@@ -136,16 +136,16 @@ int main(int argc, char** argv, char**env)
     record_end_time();
     cout << "START_TIME:" << dec << start_time/unit_interval << " END_TIME:" << dec << end_time/unit_interval << endl;
     cout << "CPU_TIME:" << dec << end_time/unit_interval - start_time/unit_interval << " seconds" << endl;
-    cout << "===>AVerage-CPS:" <<dec << (contextp->time()/10000)/((end_time -start_time)/unit_interval) << endl;
+    cout << "===>AVerage-CPS:" <<dec << (contextp->time()/CLK_PERIOD)/((end_time -start_time)/unit_interval) << endl;
     
-    hw->final();
-
-    return 0;
 #if VM_TRACE == 1
     if (flag && 0 == strcmp(flag, "+trace")) {
         tfp->close();
     }
 #endif
+    hw->final();
+
+    return 0;
 
 #if VM_COVERAGE
     Verilated::mkdir("node_node_TOP_logs");

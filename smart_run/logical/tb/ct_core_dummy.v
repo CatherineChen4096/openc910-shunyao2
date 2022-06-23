@@ -470,6 +470,11 @@ module ct_core(
   rtu_pad_retire1_pc,
   rtu_pad_retire2,
   rtu_pad_retire2_pc,
+//`ifdef SHUNSIM_MP
+  value0,
+  value1,
+  value2,
+//`endif
   rtu_yy_xx_dbgon,
   rtu_yy_xx_flush,
   rtu_yy_xx_retire0,
@@ -480,6 +485,11 @@ module ct_core(
 
 //&Ports("compare", "../../../gen_rtl/cpu/rtl/core_golden_port.v");
 // &Ports; @28
+//`ifdef SHUNSIM_MP
+output [63:0] value0;
+output [63:0] value1;
+output [63:0] value2;
+//`endif
 input   [39 :0]  biu_cp0_apb_base;                       
 input            biu_cp0_cmplt;                          
 input   [2  :0]  biu_cp0_coreid;                         
