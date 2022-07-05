@@ -12,6 +12,7 @@ using namespace std;
 #include <verilated_vcd_c.h>
 
 #include "Vtop_top.h"
+#include "sdm_config.h"
 #include "Sdm_node_TOP.h"
 using HW = Vtop_top;
 
@@ -56,12 +57,13 @@ void record_time(){
 	RDTSC(current_time);
 	counter_array[my_index++]=current_time -start_time;
 }
-
 int main(int argc, char** argv, char**env)
 {
     const std::unique_ptr<VerilatedContext> contextp{new VerilatedContext};
     const std::unique_ptr<HW> hw {new HW{contextp.get(), "TOP"}};
-    Sdm_node_TOP shunobj (hw.get(), contextp.get());
+    Sdm_config * shuncfg_ptr = new Sdm_config (sub_node_TOP_node_name);
+    shuncfg_ptr->arg_parse (argc, argv);
+    Sdm_node_TOP shunobj (shuncfg_ptr, hw.get(), contextp.get());
     Verilated::mkdir("node_node_TOP_logs");
     contextp->debug(0);
     contextp->randReset(2);
@@ -75,8 +77,9 @@ int main(int argc, char** argv, char**env)
         contextp->traceEverOn(true);
         tfp = new VerilatedVcdC;
         hw->trace(tfp, 99);
+        shunobj.fulleval();
         tfp->open("node_node_TOP_test.vcd");
-    };
+    };  
     shunobj.fulleval();
 #endif
 
@@ -86,7 +89,7 @@ int main(int argc, char** argv, char**env)
     bool retmp;
     int loop = 0;
 
-    //record start time
+ //record start time
     record_start_time();
     RDTSC(counter_CPS[0]);
     sleep(1);
@@ -136,7 +139,7 @@ int main(int argc, char** argv, char**env)
     record_end_time();
     cout << "START_TIME:" << dec << start_time/unit_interval << " END_TIME:" << dec << end_time/unit_interval << endl;
     cout << "CPU_TIME:" << dec << end_time/unit_interval - start_time/unit_interval << " seconds" << endl;
-    cout << "===>AVerage-CPS:" <<dec << (contextp->time()/CLK_PERIOD)/((end_time -start_time)/unit_interval) << endl;
+    cout << "Xuantie-MP-AVerage-CPS:" <<dec << (contextp->time()/CLK_PERIOD)/((end_time -start_time)/unit_interval) << endl;
     
 #if VM_TRACE == 1
     if (flag && 0 == strcmp(flag, "+trace")) {
