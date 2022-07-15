@@ -11,7 +11,7 @@ Please contact SHUNYAOCAD for technical details and professional support.
 ## Prepare for the environment
 
 ### Linux OS
-Ubuntu OS with latest software toolchain is recommended for stable compatibility and best simulation performance. \
+Ubuntu OS with latest software toolchain is recommended for stable compatibility and best simulation performance.  
 Of course, You could still use Redhat/CentOS OS for this evaluation.
 
 ### Prerequisites for Verilator:
@@ -27,7 +27,7 @@ sudo yum install libgoogle-perftools-dev numactl perl-doc
 ```
 
 ### Prerequisites for OpenC910:
-You can download the GNU tool chain compiled by T-HEAD from the url below: \
+You can download the GNU tool chain compiled by T-HEAD from the url below:  
 https://occ.t-head.cn/community/download?id=3948120165480468480
 1. download Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.2.1-20211110.tar.gz
 2. download Xuantie-900-gcc-elf-newlib-x86_64-V2.2.1-20211110.tar.gz
@@ -56,6 +56,7 @@ autoconf         # Create ./configure script
 ./configure      # Configure and create Makefile
 make -j          # Build Verilator itself
 ```
+
 ### Install ShunSim
 If you get approval from SHUNYAOCAD, then you will get shunsim installation package and related installation guide.
 
