@@ -92,5 +92,5 @@ If you get approval from SHUNYAOCAD, then you will get shunsim installation pack
 3.  make runcase CASE=coremark WORKDIR=work_trace_thread8 DUMP=1 THREADS=8 SIM=verilator
 
 ### Run Simulation with VCS
-4.  make runcase CASE=coremark WORKDIR=work_vcs DUMP=1 THREADS=8 SIM=vcs
+4.  make runcase CASE=coremark WORKDIR=work_vcs DUMP=1 SIM=vcs
 
