@@ -1,29 +1,33 @@
 # openc910-shunyao
 
 ## Description
-Welcome to openc910-shunyao!
-This project is forked from github.com/T-head-Semi/openc910, and has been added Verilator/ShunSim flow for fastest simulation.
-It is a good demo for you to evaluate the popular open-source RISC-V project simulate on Verilator(open-source) or ShunSim(developed by SHUNYAOCAD).
-Please contact SHUNYAOCAD for technical details and professional support.
-    >>> Website:    https://www.shunyaocad.com
+Welcome to openc910-shunyao! \
+This project is forked from github.com/T-head-Semi/openc910, and has been added Verilator/ShunSim flow for fastest simulation. \
+It is a good demo for you to evaluate the popular open-source RISC-V project simulate on Verilator(open-source) or ShunSim(developed by SHUNYAOCAD). \
+Please contact SHUNYAOCAD for technical details and professional support. \
+    >>> Website:    https://www.shunyaocad.com \
     >>> Email:      edahub@shunyaocad.com
 
 ## Prepare for the environment
 
 ### Linux OS
-Ubuntu OS with latest software toolchain is recommended for stable compatibility and best simulation performance.
+Ubuntu OS with latest software toolchain is recommended for stable compatibility and best simulation performance. \
 Of course, You could still use Redhat/CentOS OS for this evaluation.
 
 ### Prerequisites for Verilator:
 #### Ubuntu
+```
 sudo apt-get install git perl python3 make autoconf g++ flex bison ccache
 sudo apt-get install libgoogle-perftools-dev numactl perl-doc
+```
 #### Redhat/CentOS
+```
 sudo yum install git perl python3 make autoconf g++ flex bison ccache
 sudo yum install libgoogle-perftools-dev numactl perl-doc
+```
 
 ### Prerequisites for OpenC910:
-You can download the GNU tool chain compiled by T-HEAD from the url below:
+You can download the GNU tool chain compiled by T-HEAD from the url below: \
 https://occ.t-head.cn/community/download?id=3948120165480468480
 1. download Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.2.1-20211110.tar.gz
 2. download Xuantie-900-gcc-elf-newlib-x86_64-V2.2.1-20211110.tar.gz
@@ -56,6 +60,7 @@ make -j          # Build Verilator itself
 If you get approval from SHUNYAOCAD, then you will get shunsim installation package and related installation guide.
 
 ## Directory Architecture
+```
 |--C910_RTL_FACTORY/
   |--gen_rtl/               ## Verilog source code of C910
   |--setup/                 ## Script to set the environment variables
@@ -75,6 +80,7 @@ If you get approval from SHUNYAOCAD, then you will get shunsim installation pack
   |--Makefile               ## Makefile for building and running sim targets
 |--doc/                     ## The user and integration manual of C910
 |--setup.sh                 ## Setup file for setting project related environment variables
+```
 
 ## Instructions to Run Simulation
 
