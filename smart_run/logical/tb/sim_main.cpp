@@ -145,7 +145,7 @@ int main(int argc, char** argv, char** env) {
                 VL_PRINTF("Time: %" VL_PRI64 "d clk=%x\n", contextp->time(), top->clk);
             	cout << "SIM Time: " << dec << (counter_CPS[3] -counter_CPS[2]) << "CPU tick[0]: " << counter_CPS[0] <<" CPU tick[1]: " << counter_CPS[1] << " CPU time: " << ((counter_CPS[1] -counter_CPS[0])/unit_interval) << endl;
             	if (((counter_CPS[1] -counter_CPS[0])/unit_interval) !=0){
-            		cout << "===RT-CPS:" << dec << ((counter_CPS[3] -counter_CPS[2])/2)/((counter_CPS[1]- counter_CPS[0])/unit_interval) << endl;
+            		cout << "===RT-CPS:" << dec << ((counter_CPS[3] -counter_CPS[2])/CLK_PERIOD)/((counter_CPS[1]- counter_CPS[0])/unit_interval) << endl;
             	}
             }
             count_cycle++;
@@ -182,10 +182,9 @@ int main(int argc, char** argv, char** env) {
     //cout << "START_TIME:" << dec << start_time/unit_interval << " END_TIME:" << dec << end_time/unit_interval << endl;
     cout << "CPU_TIME:" << dec << end_time/unit_interval - start_time/unit_interval << " seconds" << endl;
     //   
-    cout << "===>AVerage-CPS:" <<dec << (contextp->time()/10000)/((end_time -start_time)/unit_interval) << endl;
+    cout << "===>AVerage-CPS:" <<dec << (contextp->time()/CLK_PERIOD)/((end_time -start_time)/unit_interval) << endl;
     
     // Final model cleanup
-    top->final();
     #if VM_TRACE
         if (flag && 0==strcmp(flag, "+trace")) { tfp->close(); tfp = NULL; }
     #endif
@@ -194,6 +193,7 @@ int main(int argc, char** argv, char** env) {
     Verilated::mkdir("logs");
     contextp->coveragep()->write("logs/coverage.dat");
 #endif
+    top->final();
 
     // Return good completion status
     // Don't use exit() or destructor won't get called

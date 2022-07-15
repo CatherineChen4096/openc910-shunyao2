@@ -18,12 +18,12 @@ include Vtop.mk
 
 # Use OBJCACHE (ccache) if using gmake and its installed
 COMPILE.cc = $(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
-CXX = clang
+CXX = clang++
 #######################################################################
 # Compile flags
 
 # Turn on creating .d make dependency files
-CPPFLAGS += -MMD -MP -fPIE
+CPPFLAGS += -MMD -MP -fPIE -fbracket-depth=1024
 
 # Compile in Verilator runtime debugging, so +verilator+debug works
 CPPFLAGS += -DVL_DEBUG=1

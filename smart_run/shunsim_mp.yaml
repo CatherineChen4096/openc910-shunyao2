@@ -2,7 +2,7 @@ ShunsimSet:
     mode: MP
     shun_thread_num: 5
     vrlt_auto_bypass: 1
-    workdir: sim_db_xmr
+    workdir: sim_db
     compiler: clang++
     sync_strategy: 1
 

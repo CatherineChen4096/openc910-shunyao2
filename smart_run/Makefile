@@ -107,7 +107,7 @@ endif
 ifeq ($(SIM), iverilog)
     SIM_FILELIST := $(SIM_FILELIST) -f ${CODE_BASE_PATH}/gen_rtl/filelists/C910_asic_rtl.fl -c ../logical/filelists/smart.fl -c ../logical/filelists/tb.fl
 else ifeq ($(SIM), verilator)
-    SIM_FILELIST := $(SIM_FILELIST) -f ../logical/filelists/sim_verilator.fl
+    SIM_FILELIST := $(SIM_FILELIST) -f ../logical/filelists/sim_verilator.fl ../logical/tb/sim_main.cpp
 else ifeq ($(SIM), shunsim)
     SIM_FILELIST := 
 else
@@ -194,7 +194,7 @@ runVerilator:
 	@cd ./$(WORKDIR) && time obj_dir/Vtop
 Vtop = ./$(WORKDIR)/obj_dir/Vtop
 runcase:
-		#@make cleanVerilator 
+		@make cleanVerilator 
 ifeq ($(CASE),)
 	$(error Please specify CASE=xxx on the command line, like: \
         $(newline)   > make buildcase CASE=xxx... \
@@ -204,6 +204,8 @@ endif
 ifeq ($(findstring $(CASE), $(CASE_LIST)), $(CASE))
 ifeq ($(SIM), vcs)
 	if [ ! -e ./$(WORKDIR)/simv ] ; then make -s compile ; fi
+else ifeq ($(SIM), verilator)
+	if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then make -s compile ; fi
 else ifeq ($(SIM), shunsim)
 	if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then make -s compile ; fi
 endif
