@@ -1,11 +1,11 @@
 # openc910-shunyao
 
 ## Description
-Welcome to openc910-shunyao! \
-This project is forked from github.com/T-head-Semi/openc910, and has been added Verilator/ShunSim flow for fastest simulation. \
-It is a good demo for you to evaluate the popular open-source RISC-V project simulate on Verilator(open-source) or ShunSim(developed by SHUNYAOCAD). \
-Please contact SHUNYAOCAD for technical details and professional support. \
-    >>> Website:    https://www.shunyaocad.com \
+Welcome to openc910-shunyao!  
+This project is forked from github.com/T-head-Semi/openc910, and has been added Verilator/ShunSim flow for fastest simulation.  
+It is a good demo for you to evaluate the popular open-source RISC-V project simulate on Verilator(open-source) or ShunSim(developed by SHUNYAOCAD).  
+Please contact SHUNYAOCAD for technical details and professional support.  
+    >>> Website:    https://www.shunyaocad.com  
     >>> Email:      edahub@shunyaocad.com
 
 ## Prepare for the environment
