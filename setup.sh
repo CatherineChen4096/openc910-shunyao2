@@ -12,4 +12,7 @@ export PROJECT_PATH=`pwd`
 export SIM_PATH=$PROJECT_PATH/smart_run
 export CODE_BASE_PATH=$PROJECT_PATH/C910_RTL_FACTORY
 export TOOL_EXTENSION=/software/riscv_xuantie/bin
-source /home/yangkai/1_SA/shunsim-install/ShunSim-202202/setup.sh
+
+#export VERILATOR_ROOT=<path_to_verilator>
+#PATH=$VERILATOR_ROOT/bin:$PATH 
+#export PATH

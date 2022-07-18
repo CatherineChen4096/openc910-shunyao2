@@ -2,6 +2,9 @@
 
 ## Description
 Welcome to openc910-shunyao!  
+```
+git clone https://gitee.com/shunyaocad/openc910-shunyao.git
+```
 This project is forked from github.com/T-head-Semi/openc910, and has been added Verilator/ShunSim flow for fastest simulation.  
 It is a good demo for you to evaluate the popular open-source RISC-V project simulate on Verilator(open-source) or ShunSim(developed by SHUNYAOCAD).  
 Please contact SHUNYAOCAD for technical details and professional support.  
@@ -16,27 +19,31 @@ Of course, You could still use Redhat/CentOS OS for this evaluation.
 
 ### Prerequisites for Verilator:
 #### Ubuntu
+Prefer to use Ubuntu 20.04
+gcc version > 9.3
+clang version > 10.0
 ```
-sudo apt-get install git perl python3 make autoconf g++ flex bison ccache
+sudo apt-get install git perl python3 make autoconf g++ flex bison ccache clang
 sudo apt-get install libgoogle-perftools-dev numactl perl-doc
 ```
 #### Redhat/CentOS
 ```
-sudo yum install git perl python3 make autoconf g++ flex bison ccache
+sudo yum install git perl python3 make autoconf g++ flex bison ccache clang
 sudo yum install libgoogle-perftools-dev numactl perl-doc
 ```
-
 ### Prerequisites for OpenC910:
 You can download the GNU tool chain compiled by T-HEAD from the url below:  
 https://occ.t-head.cn/community/download?id=3948120165480468480
-1. download Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.2.1-20211110.tar.gz
-2. download Xuantie-900-gcc-elf-newlib-x86_64-V2.2.1-20211110.tar.gz
-3. cp the tar files to <path_to_install>/riscv_xuantie_toolchain
-4. unzip the tar files 
+1. download Xuantie-900-gcc-linux-5.4.36-glibc-x86_64-V2.0.3-20210806.tar.gz
+2. download Xuantie-900-gcc-elf-newlib-x86_64-V2.0.3-20210806.tar.gz
+3. mkdir <path_to_install>/riscv_xuantie_toolchain
+4. cp the two tar files to <path_to_install>/riscv_xuantie_toolchain
+5. unzip the two tar files to <path_to_install>/riscv_xuantie_toolchain
 ```
-tar -zxvf *tar.gz
+tar -zxvf Xuantie-900-gcc-linux-5.4.36-glibc-x86_64-V2.0.3-20210806.tar.gz
+tar -zxvf Xuantie-900-gcc-elf-newlib-x86_64-V2.0.3-20210806.tar.gz
 ```
-5. set enviroment variable in setup.sh
+5. set enviroment variable in setup.sh of openc910-shunyao
 ```bash
 export TOOL_EXTENSION=<path_to_install>/riscv_xuantie_toolchain/bin
 ```
@@ -55,6 +62,16 @@ git clone https://gitee.com/shunyaocad/verilator-shunyao.git
 autoconf         # Create ./configure script
 ./configure      # Configure and create Makefile
 make -j          # Build Verilator itself
+```
+3. set enviroment variable in setup.sh of openc910-shunyao
+```bash
+export VERILATOR_ROOT=<path_to_verilator>
+PATH=$VERILATOR_ROOT/bin:$PATH 
+export PATH
+```
+```csh
+setenv VERILATOR_ROOT <path_to_verilator>
+setenv PATH $VERILATOR_ROOT/bin:$PATH 
 ```
 
 ### Install ShunSim
