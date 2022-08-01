@@ -16,3 +16,6 @@ export TOOL_EXTENSION=/software/riscv_xuantie/bin
 #export VERILATOR_ROOT=<path_to_verilator>
 #PATH=$VERILATOR_ROOT/bin:$PATH 
 #export PATH
+source /home/yangkai/1_SA/shunsim-install/ShunSim-202202/setup.sh 
+export SHUNYAO_LICENSE=/software/shunyao/license/shunsim_latest.lic
+
