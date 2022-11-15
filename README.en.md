@@ -105,9 +105,12 @@ If you get approval from SHUNYAOCAD, then you will get shunsim installation pack
 1.  source setup.sh          ### please modify the setup file to point the right tool installation path
 2.  cd smart_run
 
-### Run Simulation with Verilator
+### Run Simulation with galaxsim_turbo_sp
 3.  make runcase CASE=coremark WORKDIR=work_trace_thread8 DUMP=1 THREADS=8 SIM=galaxsim_turbo_sp
 
+### Run Simulation with galaxsim_turbo
+4.  source run_mp  or ./run_mp
+
 ### Run Simulation with VCS
-4.  make runcase CASE=coremark WORKDIR=work_vcs DUMP=1 SIM=vcs
+5.  make runcase CASE=coremark WORKDIR=work_vcs DUMP=1 SIM=vcs
 
