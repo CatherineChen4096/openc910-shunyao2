@@ -11,7 +11,7 @@
 export PROJECT_PATH=`pwd`
 export SIM_PATH=$PROJECT_PATH/smart_run
 export CODE_BASE_PATH=$PROJECT_PATH/C910_RTL_FACTORY
-export TOOL_EXTENSION=/home/junshu/Software/riscv_xuantie/bin
+export TOOL_EXTENSION=$PROJECT_PATH/riscv_xuantie/bin
 
 
 
