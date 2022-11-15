@@ -1,0 +1,66 @@
+ShunsimSet:
+    mode: MP
+    shun_thread_num: 5
+    vrlt_auto_bypass: 1
+    workdir: work_sim_mp
+    compiler: g++
+    sync_strategy: 1
+
+ClockSet:
+  - name: c1
+    clockid: mClk_1000M
+    frequency: 1000M
+    duty: 50
+    initvalue: 0
+    firsttoggle: 500ps
+
+GroupSet:
+  - name: TOP
+    groupid: TOP 
+    scopemodule: top 
+    modulefile: logical/tb/tb.v
+    clockconnect:
+      - name: cc1
+        clockid: mClk_1000M 
+        signal: clk 
+    vrltopts:
+      - name: default_opt 
+        trace: 0
+        threads: 16
+        timescale: 1ns/1ns 
+        filelist: logical/filelists/sim_verilator.fl 
+        vrlt_opts: --cc -Os --x-initial 0 --stats +define+SHUNSIM_MP ./vrlt_cfg.vlt ./logical/tb/ct_core_dummy.v
+
+  - name: CORE
+    groupid: CORE 
+    scopemodule: ct_core
+    modulefile: ../C910_RTL_FACTORY/gen_rtl/cpu/rtl/ct_core.v
+    clockconnect: 
+      - name: cc2 
+        clockid: mClk_1000M 
+        signal: forever_cpuclk 
+    vrltopts:
+      - name: default_opt 
+        trace: 0
+        threads: 16
+        timescale: 1ns/1ns
+        filelist: logical/filelists/sim_verilator.fl 
+        vrlt_opts: --cc -Os --x-initial 0 --stats +define+SHUNSIM_MP ./vrlt_cfg.vlt
+
+NodeSet:
+  - name: node_TOP
+    nodeid: node_TOP 
+    groupid: TOP 
+    hierarchy: top 
+
+  - name: node_core0 
+    nodeid: node_core0 
+    groupid: CORE 
+    upper: node_TOP 
+    hierarchy: top.x_soc.x_cpu_sub_system_axi.x_rv_integration_platform.x_cpu_top.x_ct_top_0.x_ct_core
+
+  - name: node_core1 
+    nodeid: node_core1
+    groupid: CORE 
+    upper: node_TOP 
+    hierarchy: top.x_soc.x_cpu_sub_system_axi.x_rv_integration_platform.x_cpu_top.x_ct_top_1.x_ct_core

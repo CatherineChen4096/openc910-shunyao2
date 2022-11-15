@@ -19,12 +19,12 @@ include ./setup/env_check.mk
 ################################################################################
 # Simulation related
 ################################################################################
-SIM = shunsim
+SIM ?= galaxsim_turbo_sp
 DUMP ?= 0
 TIMELOG = time.log 
-TIMECMD = time -a -o $(TIMELOG)
-THREADS ?= 4
-WORKDIR ?= work
+#TIMECMD = time -a -o $(TIMELOG)
+THREADS ?= 16
+WORKDIR ?= work_sim
 VERILATOR_FLAGS ?= 
 SIM_FLAGS ?= 
 
@@ -94,13 +94,13 @@ else
         SIMULATOR_LOG := 
     else ifeq ($(SIM), verilator)
         TIMESCALE := --timescale 1ns/100fs
-        SIMULATOR_OPT := -Os -x-assign 0 --threads $(THREADS) -Wno-fatal $(VERILATOR_FLAGS)
+        SIMULATOR_OPT := -Os -x-assign 0 -Wno-fatal $(VERILATOR_FLAGS)
         SIMULATOR_DEF := -cc --exe --top-module top ../vrlt_cfg.vlt
         SIMULATOR_LOG := 
-    else ifeq ($(SIM), shunsim)
+    else ifeq ($(SIM), galaxsim_turbo_sp)
         TIMESCALE := --timescale 1ns/100fs
-        SIMULATOR_OPT := --config $(SIM_PATH)/shunsim.yaml
-        SIMULATOR_LOG := --log shunsim_comp.log
+        SIMULATOR_OPT := --config $(SIM_PATH)/galaxsim_turbo_sp.yaml
+        SIMULATOR_LOG := --log galaxsim_turbo_sp_comp.log
     endif
 endif
 
@@ -108,7 +108,7 @@ ifeq ($(SIM), iverilog)
     SIM_FILELIST := $(SIM_FILELIST) -f ${CODE_BASE_PATH}/gen_rtl/filelists/C910_asic_rtl.fl -c ../logical/filelists/smart.fl -c ../logical/filelists/tb.fl
 else ifeq ($(SIM), verilator)
     SIM_FILELIST := $(SIM_FILELIST) -f ../logical/filelists/sim_verilator.fl ../logical/tb/sim_main.cpp
-else ifeq ($(SIM), shunsim)
+else ifeq ($(SIM), galaxsim_turbo_sp)
     SIM_FILELIST := 
 else
     SIM_FILELIST := $(SIM_FILELIST) -f ../logical/filelists/sim.fl
@@ -130,14 +130,14 @@ else ifeq ($(SIM), verilator)
 	@echo "verilator $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST)" >> ./$(WORKDIR)/$(TIMELOG)
 	@cd ./$(WORKDIR) && $(TIMECMD) verilator $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST) 2>&1 | tee -a vrlt_com.log
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
-else ifeq ($(SIM), shunsim)
-	@echo "[shunsim] Generating C++ files..." >> ./$(WORKDIR)/$(TIMELOG)
+else ifeq ($(SIM), galaxsim_turbo_sp)
+	@echo "[galaxsim_turbo_sp] Generating C++ files..." >> ./$(WORKDIR)/$(TIMELOG)
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
-	@echo "shunsim $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST)" >> ./$(WORKDIR)/$(TIMELOG)
-	@cd ./$(WORKDIR) && $(TIMECMD) shunsim $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST)
+	@echo "galaxsim_turbo_sp $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST)" >> ./$(WORKDIR)/$(TIMELOG)
+	@cd ./$(WORKDIR) && $(TIMECMD) galaxsim_turbo_sp $(TIMESCALE) $(SIMULATOR_OPT) $(SIMULATOR_DEF) $(SIMULATOR_LOG) $(SIM_FILELIST)
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
 else	
-	@echo "  [THead-smart] Please specify SIM = vcs to use VCS, or SIM = nc ,or SIM = verilator to use verilator ..."
+	@echo "  [THead-smart] Please specify SIM = vcs to use VCS, or SIM = nc ..."
 endif 
 
 buildVerilator:
@@ -194,7 +194,7 @@ runVerilator:
 	@cd ./$(WORKDIR) && time obj_dir/Vtop
 Vtop = ./$(WORKDIR)/obj_dir/Vtop
 runcase:
-		@make cleanVerilator 
+	@make cleanVerilator 
 ifeq ($(CASE),)
 	$(error Please specify CASE=xxx on the command line, like: \
         $(newline)   > make buildcase CASE=xxx... \
@@ -206,7 +206,7 @@ ifeq ($(SIM), vcs)
 	if [ ! -e ./$(WORKDIR)/simv ] ; then make -s compile ; fi
 else ifeq ($(SIM), verilator)
 	if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then make -s compile ; fi
-else ifeq ($(SIM), shunsim)
+else ifeq ($(SIM), galaxsim_turbo_sp)
 	if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then make -s compile ; fi
 endif
 	@make -s buildcase CASE=$(CASE)
@@ -220,12 +220,11 @@ else ifeq ($(SIM), verilator)
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
 	cd ./$(WORKDIR) && $(TIMECMD) obj_dir/Vtop $(SIM_FLAGS) 2>&1 | tee sim.log
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
-else ifeq ($(SIM), shunsim)
+else ifeq ($(SIM), galaxsim_turbo_sp)
 	if [ ! -e ./$(WORKDIR)/obj_dir/Vtop ] ; then make buildVerilator ; fi
 	@echo "[Vtop] Simulation..." >> ./$(WORKDIR)/$(TIMELOG)
 	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)	
-	cd ./$(WORKDIR) && $(TIMECMD) obj_dir/Vtop $(SIM_FLAGS) 2>&1 | tee sim.log
-	@date -R | tee -a ./$(WORKDIR)/$(TIMELOG)
+	cd ./$(WORKDIR) && obj_dir/Vtop
 else
 	cd ./$(WORKDIR) && vvp xuantie_core.vvp 
 endif
