@@ -17,5 +17,5 @@ limitations under the License.
 +incdir+../logical/tb+
 
 -y $SIM_PATH/logical/tb
-$SIM_PATH/logical/tb/tb_verilator.v
+$SIM_PATH/logical/tb/tb.v
 

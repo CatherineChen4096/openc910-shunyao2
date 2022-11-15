@@ -29,14 +29,14 @@ limitations under the License.
 
 `timescale 1ns/100ps
 
-`define CLK_PERIOD          10
+`define CLK_PERIOD          10000
 `define TCLK_PERIOD         40
 `define MAX_RUN_TIME        32'h3000000
 
-`define SOC_TOP             tb.x_soc
-`define RTL_MEM             tb.x_soc.x_axi_slave128.x_f_spsram_large
+`define SOC_TOP             top.x_soc
+`define RTL_MEM             top.x_soc.x_axi_slave128.x_f_spsram_large
 
-`define CPU_TOP             tb.x_soc.x_cpu_sub_system_axi.x_rv_integration_platform.x_cpu_top
+`define CPU_TOP             top.x_soc.x_cpu_sub_system_axi.x_rv_integration_platform.x_cpu_top
 `define tb_retire0          `CPU_TOP.core0_pad_retire0
 `define retire0_pc          `CPU_TOP.core0_pad_retire0_pc[39:0]
 `define tb_retire1          `CPU_TOP.core0_pad_retire1
@@ -52,8 +52,9 @@ limitations under the License.
 // `define APB_BASE_ADDR       40'h4000000000
 `define APB_BASE_ADDR       40'hb0000000
 
-module tb();
-  reg clk;
+module top(
+  input wire clk
+);
   reg jclk;
   reg rst_b;
   reg jrst_b;
@@ -70,38 +71,66 @@ module tb();
   
   assign pad_yy_gate_clk_en_b = 1'b1;
   
-  initial
-  begin
-    clk =0;
-    forever begin
-      #(`CLK_PERIOD/2) clk = ~clk;
-    end
-  end
+  //initial
+  //begin
+  //  clk =0;
+  //  forever begin
+  //    #(`CLK_PERIOD/2) clk = ~clk;
+  //  end
+  //end
   
+
+
+  integer jclkCnt;
   initial 
   begin 
     jclk = 0;
-    forever begin
-      #(`TCLK_PERIOD/2) jclk = ~jclk;
+    jclkCnt = 0;
+    //forever begin
+    //  #(`TCLK_PERIOD/2) jclk = ~jclk;
+    //end
+  end
+  always@(posedge clk) begin
+    if(jclkCnt < `TCLK_PERIOD / `CLK_PERIOD / 2 - 1) begin
+      jclkCnt = jclkCnt + 1;
+    end
+    else begin
+      jclkCnt = 0;
+      jclk = !jclk;
     end
   end
   
+  integer rst_bCnt;
   initial
   begin
-    rst_b = 1;
-    #100;
+    rst_bCnt = 0;
     rst_b = 0;
-    #100;
-    rst_b = 1;
+    //#100;
+    //rst_b = 0;
+    //#100;
+    //rst_b = 1;
+  end
+
+  always@(posedge clk) begin
+    rst_bCnt = rst_bCnt + 1;
+    if(rst_bCnt > 10 && rst_bCnt < 20) rst_b = 0;
+    else if(rst_bCnt > 20) rst_b = 1;
   end
   
+  integer jrstCnt;
   initial
   begin
     jrst_b = 1;
-    #400;
-    jrst_b = 0;
-    #400;
-    jrst_b = 1;
+    jrstCnt = 0;
+    //#400;
+    //jrst_b = 0;
+    //#400;
+    //jrst_b = 1;
+  end
+  always@(posedge clk) begin
+    jrstCnt = jrstCnt + 1;
+    if(jrstCnt > 40 && jrstCnt < 80) jrst_b = 0;
+    else if(jrstCnt > 80) jrst_b = 1;
   end
  
   integer i;
@@ -187,15 +216,28 @@ module tb();
     end
   end
 
+  integer clkCnt;
+  always@(posedge clk) begin
+    clkCnt = clkCnt + 1;
+    if(clkCnt > `MAX_RUN_TIME) begin
+      $display("**********************************************");
+      $display("*   meeting max simulation time, stop!       *");
+      $display("**********************************************");
+      FILE = $fopen("run_case.report","w");
+      $fwrite(FILE,"TEST FAIL");   
+      $finish;
+    end
+  end
   initial
   begin
-  #(`MAX_RUN_TIME * `CLK_PERIOD);
-    $display("**********************************************");
-    $display("*   meeting max simulation time, stop!       *");
-    $display("**********************************************");
-    FILE = $fopen("run_case.report","w");
-    $fwrite(FILE,"TEST FAIL");   
-  $finish;
+    clkCnt = 0;
+  //#(`MAX_RUN_TIME * `CLK_PERIOD);
+  //  $display("**********************************************");
+  //  $display("*   meeting max simulation time, stop!       *");
+  //  $display("**********************************************");
+  //  FILE = $fopen("run_case.report","w");
+  //  $fwrite(FILE,"TEST FAIL");   
+  //$finish;
   end
   
   reg [31:0] retire_inst_in_period;
@@ -208,9 +250,9 @@ module tb();
       cycle_count[31:0] <= 32'b1;
     else 
       cycle_count[31:0] <= cycle_count[31:0] + 1'b1;
-        if(cycle_count % 5000 == 0) begin 
-            $display("Time %0p ns: clk=%0x", $time, clk);
-        end 
+        if(cycle_count % 5000 == 0) begin
+            $display("Time:%t ns: clk=%0x", $time-10, clk);
+        end
   end
   
   
@@ -222,10 +264,10 @@ module tb();
     begin
       if(retire_inst_in_period[31:0] == 0)begin
         $display("*************************************************************");
-        $display("* Error: There is no instructions retired in the last %d cycles! *", `LAST_CYCLE);
+        $display("* Error: %0t There is no instructions retired in the last %d cycles! *", $time, `LAST_CYCLE);
         $display("*              Simulation Fail and Finished!                *");
         $display("*************************************************************");
-        #10;
+        //#10;
         FILE = $fopen("run_case.report","w");
         $fwrite(FILE,"TEST FAIL");   
   
@@ -257,9 +299,15 @@ module tb();
     // value0           <= `CPU_TOP.core0_pad_wb0_data[63:0];
     // value1           <= `CPU_TOP.core0_pad_wb1_data[63:0];
     // value2           <= `CPU_TOP.core0_pad_wb2_data[63:0];
+`ifdef SHUNSIM_MP
+    value0              <= `CPU_TOP.x_ct_top_0.x_ct_core.value0;
+    value1              <= `CPU_TOP.x_ct_top_0.x_ct_core.value1;
+    value2              <= `CPU_TOP.x_ct_top_0.x_ct_core.value2;
+`else
     value0              <= `CPU_TOP.x_ct_top_0.x_ct_core.x_ct_iu_top.x_ct_iu_rbus.rbus_pipe0_wb_data[63:0];
     value1              <= `CPU_TOP.x_ct_top_0.x_ct_core.x_ct_iu_top.x_ct_iu_rbus.rbus_pipe1_wb_data[63:0];
     value2              <= `CPU_TOP.x_ct_top_0.x_ct_core.x_ct_lsu_top.x_ct_lsu_ld_wb.ld_wb_preg_data_sign_extend[63:0];
+`endif
   end
   
   always @(posedge clk)
@@ -269,7 +317,7 @@ module tb();
       $display("**********************************************");
       $display("*    simulation finished successfully        *");
       $display("**********************************************");
-     #10;
+     //#10;
      FILE = $fopen("run_case.report","w");
      $fwrite(FILE,"TEST PASS");   
   
@@ -280,7 +328,7 @@ module tb();
      $display("**********************************************");
      $display("*    simulation finished with error          *");
      $display("**********************************************");
-     #10;
+     //#10;
      FILE = $fopen("run_case.report","w");
      $fwrite(FILE,"TEST FAIL");   
   
@@ -327,8 +375,9 @@ module tb();
     `ifdef IVERILOG_SIM
       $dumpfile("test.vcd");
       $dumpvars;  
-    `else
-      $fsdbDumpvars();
+    //`else
+    //  $dumpfile("test.vcd");
+    //  $dumpvars;  
     `endif
   `endif
   end
@@ -336,6 +385,7 @@ module tb();
   
   assign jtg_tdi = 1'b0;
   assign uart0_sin = 1'b1;
+  
   
   soc x_soc(
     .i_pad_clk           ( clk                  ),
@@ -368,11 +418,11 @@ module tb();
 
   initial 
   begin
-    $deposit(tb.x_soc.pmu_cpu_pwr_on,  1'b1);
-    $deposit(tb.x_soc.pmu_cpu_iso_in,  1'b0);
-    $deposit(tb.x_soc.pmu_cpu_iso_out, 1'b0);
-    $deposit(tb.x_soc.pmu_cpu_save,    1'b0);
-    $deposit(tb.x_soc.pmu_cpu_restore, 1'b0);
+    $deposit(top.x_soc.pmu_cpu_pwr_on,  1'b1);
+    $deposit(top.x_soc.pmu_cpu_iso_in,  1'b0);
+    $deposit(top.x_soc.pmu_cpu_iso_out, 1'b0);
+    $deposit(top.x_soc.pmu_cpu_save,    1'b0);
+    $deposit(top.x_soc.pmu_cpu_restore, 1'b0);
   end
 `endif
   

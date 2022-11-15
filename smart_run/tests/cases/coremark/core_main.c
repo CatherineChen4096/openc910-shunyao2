@@ -76,7 +76,7 @@ void *iterate(void *pres) {
   vtimer_end= get_vtimer(); 
   vcycles = vtimer_end - vtimer_start;
   vcycles = vcycles/iterations;
-  printf ("\nVCUNT_SIM: CoreMark has been run %d times, one times cost %d cycles !\n",iterations,vcycles);
+  //printf ("\nVCUNT_SIM: CoreMark has been run %d times, one times cost %d cycles !\n",iterations,vcycles);
   float score;
 //  score = FREQ/(float)vcycles;
 //  printf ("\nVCUNT_SIM: CoreMark 1.0 : %f iterations/sec\n",score); //CoreMark = iterations of a sec
@@ -176,7 +176,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	results[0].seed2=get_seed(2);
 	results[0].seed3=get_seed(3);
 	//results[0].iterations= 100; // To match Fudan results
-	results[0].iterations= 2;
+	results[0].iterations= 1;
 #if CORE_DEBUG
 	results[0].iterations=1;
 #endif
@@ -406,7 +406,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 #endif
 	}
 	if (total_errors>0)
-		printf("Errors detected\n");
+		//printf("Errors detected\n");//junshu
 	if (total_errors<0)
 		printf("Cannot validate operation for these seed values, please compare with results on a known platform.\n");
 

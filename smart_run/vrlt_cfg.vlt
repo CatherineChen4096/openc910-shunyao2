@@ -1,4 +1,4 @@
-`verilator_config 
+`verilator_config
 split_var -module "ct_ifu_ipctrl" -var "missigned_bry_vld"
 split_var -module "ct_idu_dep_reg_src2_entry" -var "x_read_data"
 split_var -module "ct_l2c_data" -var "data_ram_cen"

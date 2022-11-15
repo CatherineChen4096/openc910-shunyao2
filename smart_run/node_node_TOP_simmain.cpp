@@ -18,8 +18,8 @@ using HW = Vtop_top;
 
 uint64_t GlobalMainTime = 0;
 
-#define CLK_PERIOD          1000
-#define TCLK_PERIOD         4
+#define CLK_PERIOD          100000
+#define TCLK_PERIOD         40
 
 //Real-time CPS printing
 #define RDTSC(val) \
@@ -95,15 +95,18 @@ int main(int argc, char** argv, char**env)
     sleep(1);
     RDTSC(counter_CPS[1]);
     unit_interval =counter_CPS[1] - counter_CPS[0];
-    cout << "Unit Time: " << dec << unit_interval << " CPU tick[0]: " << counter_CPS[0] << " CPU tick[1]: " << counter_CPS[1] << endl;
+    cout << "  GalaxSim (R) Simulation-Runtime\n";
+    cout << "  Copyright (c) 2020-2022 by XEPIC Technology Co., Ltd.\n";
+    cout << "  Version: 22.2.1.94 x86_64_R_E \"Sep  8\" \"2022 02:10:14\"" << endl;
+    //cout << "Unit Time: " << dec << unit_interval << " CPU tick[0]: " << counter_CPS[0] << " CPU tick[1]: " << counter_CPS[1] << endl;
 
-    while (!contextp->gotFinish()) {
-    //while (contextp->time()<4000000000) {
+    //while (!contextp->gotFinish()) {
+    while (contextp->time()<12000000) {
         //Info ("loop %d", loop);
         if((contextp->time() % 50000000) == 0) {
             count_print =1;
             if(contextp->time() >= 50000000 && contextp->time() <= 3300000000){
-                cout << "Time: " << dec << contextp->time()/1000 << " ns" << endl;
+                //cout << "Time: " << dec << contextp->time()/1000 << " ns, clk=" << short(top->clk)  << endl;
             }
             if (count_cycle % 2 == 0){
             	RDTSC(counter_CPS[0]);
@@ -113,9 +116,9 @@ int main(int argc, char** argv, char**env)
             	RDTSC(counter_CPS[1]);
             	counter_CPS[3] = contextp->time();
                 //VL_PRINTF("Time: %" VL_PRI64 "d clk=%x\n", contextp->time(), top->clk);
-            	cout << "SIM Time: " << dec << (counter_CPS[3] -counter_CPS[2]) << "CPU tick[0]: " << counter_CPS[0] <<" CPU tick[1]: " << counter_CPS[1] << " CPU time: " << ((counter_CPS[1] -counter_CPS[0])/unit_interval) << endl;
+            	//cout << "SIM Time: " << dec << (counter_CPS[3] -counter_CPS[2]) << "CPU tick[0]: " << counter_CPS[0] <<" CPU tick[1]: " << counter_CPS[1] << " CPU time: " << ((counter_CPS[1] -counter_CPS[0])/unit_interval) << endl;
             	if (((counter_CPS[1] -counter_CPS[0])/unit_interval) !=0){
-            		cout << "===RT-CPS:" << dec << ((counter_CPS[3] -counter_CPS[2])/CLK_PERIOD)/((counter_CPS[1]- counter_CPS[0])/unit_interval) << endl;
+            		//cout << "===RT-CPS:" << dec << ((counter_CPS[3] -counter_CPS[2])/CLK_PERIOD)/((counter_CPS[1]- counter_CPS[0])/unit_interval) << endl;
             	}
             }
             count_cycle++;
@@ -137,9 +140,9 @@ int main(int argc, char** argv, char**env)
         loop++;
     }
     record_end_time();
-    cout << "START_TIME:" << dec << start_time/unit_interval << " END_TIME:" << dec << end_time/unit_interval << endl;
-    cout << "CPU_TIME:" << dec << end_time/unit_interval - start_time/unit_interval << " seconds" << endl;
-    cout << "Xuantie-MP-AVerage-CPS:" <<dec << (contextp->time()/CLK_PERIOD)/((end_time -start_time)/unit_interval) << endl;
+    //cout << "START_TIME:" << dec << start_time/unit_interval << " END_TIME:" << dec << end_time/unit_interval << endl;
+    cout << "Simulation CPU time:" << dec << end_time/unit_interval - start_time/unit_interval << " seconds" << endl;
+    cout << "AVerage-CPS:" <<dec << (contextp->time()/CLK_PERIOD)/((end_time -start_time)/unit_interval) << endl;
     
 #if VM_TRACE == 1
     if (flag && 0 == strcmp(flag, "+trace")) {

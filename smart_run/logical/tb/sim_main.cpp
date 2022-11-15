@@ -18,7 +18,7 @@ using namespace std;
     #include <verilated_vcd_c.h>
 #endif
 
-#define CLK_PERIOD          10000
+#define CLK_PERIOD          100000
 #define TCLK_PERIOD         40
 // Legacy function required only so linking works on Cygwin and MSVC++
 double sc_time_stamp() { return 0; }
@@ -66,7 +66,10 @@ int main(int argc, char** argv, char** env) {
     sleep(1);
     RDTSC(counter_CPS[1]);
     unit_interval =counter_CPS[1] - counter_CPS[0];
-    cout << "Unit Time: " << dec << unit_interval << " CPU tick[0]: " << counter_CPS[0] << " CPU tick[1]: " << counter_CPS[1] << endl;
+    //cout << "Unit Time: " << dec << unit_interval << " CPU tick[0]: " << counter_CPS[0] << " CPU tick[1]: " << counter_CPS[1] << endl;
+    cout << "  GalaxSim Turbo (R) Simulation-Runtime\n";
+    cout << "  Copyright (c) 2020-2022 by XEPIC Technology Co., Ltd.\n";
+    cout << "  Version: 22.1.3.5940 x86_64_R_E \"Sep  26 2022\" \"00:07:14\"" << endl;
     // Prevent unused variable warnings
     if (false && argc && argv && env) {}
 
@@ -114,7 +117,7 @@ int main(int argc, char** argv, char** env) {
     top->clk = 0;
 
     // Simulate until $finish
-    while (!contextp->gotFinish()) {
+    while (!contextp->gotFinish()/*contextp->time()< 8000000000*/) {
         // Historical note, before Verilator 4.200 Verilated::gotFinish()
         // was used above in place of contextp->gotFinish().
         // Most of the contextp-> calls can use Verilated:: calls instead;
@@ -133,7 +136,7 @@ int main(int argc, char** argv, char** env) {
 
         if((contextp->time() % 50000000) == 0) {
             count_print =1;
-            cout << "Time: " << dec << contextp->time()/1000 << " ns, clk=" << short(top->clk) << endl;
+            //cout << "Time: " << dec << contextp->time()/1000 << " ns: clk=" << short(top->clk) << endl;
             //VL_PRINTF("time:\t %lu\n", contextp -> time());
             if (count_cycle % 2 == 0){
             	RDTSC(counter_CPS[0]);
@@ -142,10 +145,10 @@ int main(int argc, char** argv, char** env) {
             else{
             	RDTSC(counter_CPS[1]);
             	counter_CPS[3] = contextp->time();
-                VL_PRINTF("Time: %" VL_PRI64 "d clk=%x\n", contextp->time(), top->clk);
-            	cout << "SIM Time: " << dec << (counter_CPS[3] -counter_CPS[2]) << "CPU tick[0]: " << counter_CPS[0] <<" CPU tick[1]: " << counter_CPS[1] << " CPU time: " << ((counter_CPS[1] -counter_CPS[0])/unit_interval) << endl;
-            	if (((counter_CPS[1] -counter_CPS[0])/unit_interval) !=0){
-            		cout << "===RT-CPS:" << dec << ((counter_CPS[3] -counter_CPS[2])/CLK_PERIOD)/((counter_CPS[1]- counter_CPS[0])/unit_interval) << endl;
+                //VL_PRINTF("Time: %" VL_PRI64 "d  ns: clk=%x\n", contextp->time(), top->clk);
+            	//cout << "SIM Time: " << dec << (counter_CPS[3] - counter_CPS[2]) << "CPU tick[0]: " << counter_CPS[0] <<" CPU tick[1]: " << counter_CPS[1] << " CPU time: " << ((counter_CPS[1] -counter_CPS[0])/unit_interval) << endl;
+            	if (((counter_CPS[1] - counter_CPS[0])/unit_interval) !=0){
+            		//cout << "===RT-CPS:" << dec << ((counter_CPS[3] - counter_CPS[2])/CLK_PERIOD)/((counter_CPS[1]- counter_CPS[0])/unit_interval) << endl;
             	}
             }
             count_cycle++;
@@ -180,9 +183,8 @@ int main(int argc, char** argv, char** env) {
     }
     record_end_time();
     //cout << "START_TIME:" << dec << start_time/unit_interval << " END_TIME:" << dec << end_time/unit_interval << endl;
-    cout << "CPU_TIME:" << dec << end_time/unit_interval - start_time/unit_interval << " seconds" << endl;
-    //   
-    cout << "===>AVerage-CPS:" <<dec << (contextp->time()/CLK_PERIOD)/((end_time -start_time)/unit_interval) << endl;
+    cout << "Simulation CPU time:" << dec << end_time/unit_interval - start_time/unit_interval << " s" << endl;
+    //cout << "AVerage-CPS:" <<dec << (contextp->time()/CLK_PERIOD)/((end_time -start_time)/unit_interval) << endl;
     
     // Final model cleanup
     #if VM_TRACE

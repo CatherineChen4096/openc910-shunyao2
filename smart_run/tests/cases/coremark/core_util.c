@@ -200,11 +200,11 @@ ee_u8 check_data_types() {
 		retval++;
 	}
 	if (sizeof(ee_ptr_int) != sizeof(int *)) {
-		printf("ERROR: ee_ptr_int is not a datatype that holds an int pointer!\n");
+	//	printf("ERROR: ee_ptr_int is not a datatype that holds an int pointer!\n");
 		retval++;
 	}
 	if (retval>0) {
-		printf("ERROR: Please modify the datatypes in core_portme.h!\n");
+	//	printf("ERROR: Please modify the datatypes in core_portme.h!\n");
 	}
 	return retval;
 }
