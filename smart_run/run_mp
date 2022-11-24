@@ -1,5 +1,6 @@
+rm -rf work_sim_mp
 mkdir -p work_sim_mp
-make buildcase CASE=coremark WORKDIR=work_sim_mp
+#make buildcase CASE=coremark WORKDIR=work_sim_mp
 galaxsim_turbo -i galaxsim_turbo.yaml
 cp ./Makefile_mp work_sim_mp/Makefile 
 cp ./node_node_TOP_simmain.cpp work_sim_mp

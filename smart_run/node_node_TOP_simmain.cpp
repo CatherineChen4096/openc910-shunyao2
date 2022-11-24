@@ -100,8 +100,8 @@ int main(int argc, char** argv, char**env)
     cout << "  Version: 22.2.1.94 x86_64_R_E \"Sep  8\" \"2022 02:10:14\"" << endl;
     //cout << "Unit Time: " << dec << unit_interval << " CPU tick[0]: " << counter_CPS[0] << " CPU tick[1]: " << counter_CPS[1] << endl;
 
-    //while (!contextp->gotFinish()) {
-    while (contextp->time()<12000000) {
+    while (!contextp->gotFinish()) {
+//    while (contextp->time()<12000000) {
         //Info ("loop %d", loop);
         if((contextp->time() % 50000000) == 0) {
             count_print =1;
