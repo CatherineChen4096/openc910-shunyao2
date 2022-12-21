@@ -1,0 +1,4 @@
+12-03 23:01:14 -Pre- [INFO] License checkout...
+12-03 23:01:14 -Pre- [INFO>] <workdir> is set work_sim_mp.
+12-03 23:01:14 -Pre- [WARN] wordir exists: /home/catherinec/openc910-shunyao/smart_run/work_sim_mp , data may be overwriten.
+12-03 23:01:14 -Pre- [ERROR] /home/catherinec/openc910-shunyao/smart_run/work_sim_mp/.lock exists. This means the GST is running and writting this workdir. Please remove it if you want to continue.

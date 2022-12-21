@@ -23,7 +23,7 @@ CXX = clang++
 # Compile flags
 
 # Turn on creating .d make dependency files
-CPPFLAGS += -MMD -MP -fPIE -fbracket-depth=1024
+CPPFLAGS += -MMD -MP -fPIE
 
 # Compile in Verilator runtime debugging, so +verilator+debug works
 CPPFLAGS += -DVL_DEBUG=1

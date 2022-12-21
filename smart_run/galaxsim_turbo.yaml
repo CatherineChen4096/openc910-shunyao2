@@ -29,7 +29,7 @@ GroupSet:
         threads: 16
         timescale: 1ns/1ns 
         filelist: logical/filelists/sim_verilator.fl 
-        vrlt_opts: --cc -Os --x-initial 0 --stats +define+SHUNSIM_MP ./vrlt_cfg.vlt ./logical/tb/ct_core_dummy.v
+        vrlt_opts: --cc -Os --x-initial 0 --no-timing --stats --trace +define+SHUNSIM_MP ./vrlt_cfg.vlt ./logical/tb/ct_core_dummy.v
 
   - name: CORE
     groupid: CORE 

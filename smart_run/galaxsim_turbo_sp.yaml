@@ -1,9 +1,9 @@
 name: xuantie_cfg
 env:
-    CODE_BASE_PATH: /home/junshu/Testcase/P025_xuantie/openc910_main/C910_RTL_FACTORY
-    SIM_PATH: /home/junshu/Testcase/P025_xuantie/openc910_main/smart_run 
-    TOOL_EXTENSION: /home/junshu/Software/riscv_xuantie/bin
-    PROJECT_PATH: /home/junshu/Testcase/P025_xuantie/openc910_main
+    CODE_BASE_PATH: /home/catherinec/openc910-shunyao/C910_RTL_FACTORY
+    SIM_PATH: /home/catherinec/openc910-shunyao/smart_run 
+    TOOL_EXTENSION: /home/catherinec/openc910-shunyao/riscv_xuantie/bin
+    PROJECT_PATH: /home/catherinec/openc910-shunyao
 ShunsimOpt:
     - name: default_opts
       auto_gen_ctb: 0
@@ -29,7 +29,7 @@ VrltOpt:
       #vrlt_cfg: $SIM_PATH/vrlt_cfg.vlt
       filelist: ${SIM_PATH}/logical/filelists/sim_verilator.fl
       #All left options could be put in vrlt_opts
-      vrlt_opts: -Os -x-assign 0 --cc ${SIM_PATH}/vrlt_cfg.vlt ${SIM_PATH}/logical/tb/sim_main.cpp ${SIM_PATH}/profile.vlt
+      vrlt_opts: -Os -x-assign 0 --no-timing --trace --cc ${SIM_PATH}/vrlt_cfg.vlt ${SIM_PATH}/logical/tb/sim_main.cpp ${SIM_PATH}/profile.vlt
 
 VrltCfg:
     - name: split_var_1 

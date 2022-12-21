@@ -94,13 +94,13 @@ else
         SIMULATOR_LOG := 
     else ifeq ($(SIM), verilator)
         TIMESCALE := --timescale 1ns/100fs
-        SIMULATOR_OPT := -Os -x-assign 0 -Wno-fatal $(VERILATOR_FLAGS)
+        SIMULATOR_OPT := -Os -x-assign --trace 0 -Wno-fatal $(VERILATOR_FLAGS)
         SIMULATOR_DEF := -cc --exe --top-module top ../vrlt_cfg.vlt
         SIMULATOR_LOG := 
     else ifeq ($(SIM), galaxsim_turbo_sp)
         TIMESCALE := --timescale 1ns/100fs
         SIMULATOR_OPT := --config $(SIM_PATH)/galaxsim_turbo_sp.yaml
-        SIMULATOR_LOG := --log galaxsim_turbo_sp_comp.log
+        SIMULATOR_LOG := --no-timing --log galaxsim_turbo_sp_comp.log
     endif
 endif
 
